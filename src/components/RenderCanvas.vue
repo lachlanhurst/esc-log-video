@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg"
 
 import { CanvasCapture } from 'canvas-capture'
 
@@ -23,41 +22,12 @@ const MP4_OPTIONS = {
 }
 
 
-// const ffmpeg = createFFmpeg({
-//   log: true,
-// })
-
-// let video = ref(null);
-// const file =
-//   process.env.NODE_ENV === "production"
-//     ? "/vue-app/flame.avi"
-//     : "/flame.avi";
-
-
-// const transcode = async () => {
-//   message.value = "Loading ffmeg-core.js";
-//   await ffmpeg.load();
-//   message.value = "Start transcoding";
-//   ffmpeg.FS("writeFile", "test.avi", await fetchFile(file));
-//   await ffmpeg.run("-i", "test.avi", "test.mp4");
-//   message.value = "Complete transcoding";
-//   const data = ffmpeg.FS("readFile", "test.mp4");
-//   video.value = URL.createObjectURL(
-//     new Blob([data.buffer], { type: "video/mp4" })
-//   );
-// }
 
 const myCanvas = ref(null)
 const context = ref(null)
 const mp4Capture = ref(null)
 
 onMounted(() => {
-
-  // Initialize and pass in canvas.
-  // CanvasCapture.init(
-  //   myCanvas.value,
-  //   { showRecDot: true }, // Options are optional, more info below.
-  // );
 
   CanvasCapture.init(myCanvas.value, {
     showRecDot: true,
@@ -139,64 +109,19 @@ const stopRecording = () => {
   mp4Capture.value = undefined;
 }
 
-
-
+defineExpose({
+  startRecording,
+  stopRecording
+})
 
 </script>
 
 <template>
-  <h1>{{ msg }}</h1>
-
-  <div class="card">
-    <a-button @click="count++">count is {{ count }}</a-button>
-    <p>
-      Edit
-      <code>components/HelloWorld.vue</code> to test HMR
-    </p>
-    <p>So I did edit it!</p>
-  </div>
-
   <div>
     <canvas width="300" height="300" ref="myCanvas" id="myCanvas"></canvas>
   </div>
-  
-
-  <div>
-    <!-- <video :src="video" controls /> -->
-
-    <a-row :gutter="[16,0]" justify="center">
-      <a-col >
-        <a-button @click="startRecording" >
-          Start
-        </a-button>
-      </a-col>
-      <a-col >
-        <a-button @click="stopRecording" >
-          Stop
-        </a-button>
-      </a-col>
-    </a-row>
-
-    <!-- <p>{{ message }}</p> -->
-  </div>
-
-  <!-- <p>
-    Check out
-    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank"
-      >create-vue</a
-    >, the official Vue + Vite starter
-  </p>
-  <p>
-    Install
-    <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
-    in your IDE for a better DX
-  </p>
-  <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p> -->
 </template>
 
 <style scoped>
-.read-the-docs {
-  color: #888;
-}
 
 </style>

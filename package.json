@@ -1,7 +1,7 @@
 {
-  "name": "vesc-log-video",
+  "name": "VESC Log Video",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,6 +11,11 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@ffmpeg/core": "^0.11.0",
+    "@ffmpeg/ffmpeg": "^0.11.6",
+    "ant-design-vue": "^3.2.15",
+    "canvas-capture": "github:amandaghassaei/canvas-capture#dev",
+    "coi-serviceworker": "^0.1.6",
     "vue": "^3.2.45"
   },
   "devDependencies": {

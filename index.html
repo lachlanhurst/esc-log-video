@@ -4,10 +4,13 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + Vue</title>
+    <title>VESC Log Video</title>
   </head>
   <body>
     <div id="app"></div>
+    <!-- Set the correct server headers for gh-pages to support SharedArrayBuffer -->
+    <!-- https://github.com/gzuidhof/coi-serviceworker -->
+    <script type="module" src="coi-serviceworker.min.js"></script>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
