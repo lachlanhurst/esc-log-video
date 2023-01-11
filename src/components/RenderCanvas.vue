@@ -47,7 +47,7 @@ onMounted(() => {
   context.value = myCanvas.value?.getContext("2d")
 
   // Start animation loop.
-  loop();
+  return setInterval(loop, 0);
 })
 
 
@@ -56,7 +56,6 @@ var currentColor = ref(null)
 let pos = ref(0)
 
 const loop = () => {
-  requestAnimationFrame(loop);
 
   if (pos.value % 20 == 0) {
     currentColor.value = colors[Math.floor(Math.random() * colors.length)]
