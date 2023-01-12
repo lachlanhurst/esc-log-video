@@ -1,27 +1,18 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 import { CanvasCapture } from 'canvas-capture'
 
 
-defineProps({
+
+const props = defineProps({
   msg: String,
+  videoOptions: Object,
 })
 
 
 const count = ref(0)
 const message = ref("Start capture")
-
-const MP4_OPTIONS = {
-  name: 'demo-mp4',
-  format: CanvasCapture.MP4,
-  quality: 1,
-  fps: 60,
-  onExportProgress: (progress) => console.log(`MP4 export progress: ${progress}.`),
-  onExportFinish: () => console.log(`Finished MP4 export.`),
-}
-
-
 
 const myCanvas = ref(null)
 const context = ref(null)
@@ -47,7 +38,7 @@ onMounted(() => {
   context.value = myCanvas.value?.getContext("2d")
 
   // Start animation loop.
-  return setInterval(loop, 0);
+  return setInterval(loop, 10);
 })
 
 
@@ -63,18 +54,19 @@ const loop = () => {
   
   var contextV = context.value
   var canvas = myCanvas.value
+  var vo = props.videoOptions
 
   const { width, height } = canvas.getBoundingClientRect()
   
   contextV.clearRect(0, 0, width, height)
 
   contextV.beginPath()
-  contextV.fillStyle = 'green'
+  contextV.fillStyle = vo.backgroundColor
   contextV.fillRect(0, 0, width, height);
   contextV.beginPath()
   contextV.fillStyle = currentColor.value
   contextV.fillRect(pos.value, pos.value, 10, 10)
-  contextV.fillStyle = 'white'
+  contextV.fillStyle = vo.foregroundColor
   contextV.font = "30px Arial"
   contextV.fillText("pos = " + pos.value, 100, 50)
   
@@ -99,7 +91,17 @@ const loop = () => {
 }
 
 const startRecording = () => {
-  mp4Capture.value = CanvasCapture.beginVideoRecord(MP4_OPTIONS);
+  let vo = props.videoOptions
+  const mp4Options = {
+    name: 'demo-mp4',
+    format: CanvasCapture.MP4,
+    quality: 1,
+    fps: vo.fps,
+    onExportProgress: (progress) => console.log(`MP4 export progress: ${progress}.`),
+    onExportFinish: () => console.log(`Finished MP4 export.`),
+  }
+
+  mp4Capture.value = CanvasCapture.beginVideoRecord(mp4Options);
 }
 
 const stopRecording = () => {
@@ -107,6 +109,18 @@ const stopRecording = () => {
   CanvasCapture.stopRecord();
   mp4Capture.value = undefined;
 }
+
+// watch(props.videoOptions, async (newVideoOptions, oldVideoOptions) => {
+//   console.log(props.videoOptions)
+// })
+watch(
+  () => props.videoOptions,
+  (newValue, oldValue) => {
+    console.log(newValue, oldValue)
+  },
+  { deep: true }
+)
+
 
 defineExpose({
   startRecording,
