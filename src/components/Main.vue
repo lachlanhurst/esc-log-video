@@ -87,7 +87,19 @@ const updateColor = (color, colorAttribute) => {
   <a-layout class="layout">
     <a-layout-header>
       <div class="logo" />
-      <h1>VESC Log Video</h1>
+      <a-row type="flex" justify="space-between" align="center">
+        <div class="heading">VESC Log Video</div>
+        <div>
+          <a-col style="line-height: normal; color: white; padding-top: 16px;">
+            <a-space direction="vertical" size="12">
+              <a-row justify="end">
+                <a href="https://github.com/lachlanhurst/vesc-log-video">GitHub repo</a>
+              </a-row>
+              <a-row justify="end">©2023 Lachlan Hurst</a-row>
+            </a-space>
+          </a-col>
+        </div>
+      </a-row>
     </a-layout-header>
     <a-layout-content :style="{ background: '#fff', }">
       <a-row type="flex" :style="{ padding: '8px 8px', height: '100%' }" :gutter="[8, 8]">
@@ -204,9 +216,6 @@ const updateColor = (color, colorAttribute) => {
         </a-col>
       </a-row>
     </a-layout-content>
-    <a-layout-footer style="text-align: right; padding: 12px 12px">
-      ©2023 Lachlan Hurst - <a href="https://github.com/lachlanhurst/vesc-log-video">GitHub repo</a>
-    </a-layout-footer>
   </a-layout>
 </template>
 
@@ -221,8 +230,11 @@ const updateColor = (color, colorAttribute) => {
   flex: 1;
 }
 
-h1 {
+.heading {
   color: white;
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 3.2em;
+  font-weight: 400;
 }
 
 .site-layout-content {
