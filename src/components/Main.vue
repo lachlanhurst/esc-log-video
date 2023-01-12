@@ -254,12 +254,11 @@ h1 {
 }
 
 .color-picker {
-  box-shadow: none;
-  padding: 0px;
+  box-shadow: none !important;
+  padding: 0px !important;
 }
 
 .form-item-less-margin {
   margin-bottom: 12px;
 }
-
 </style>
