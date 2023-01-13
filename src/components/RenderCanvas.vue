@@ -37,8 +37,7 @@ onMounted(() => {
 
   context.value = myCanvas.value?.getContext("2d")
 
-  // Start animation loop.
-  return setInterval(loop, 10);
+  draw()
 })
 
 
@@ -46,18 +45,13 @@ var colors = ["red", "blue", "yellow", "orange", "black", "white", "pink", "purp
 var currentColor = ref(null)
 let pos = ref(0)
 
-const loop = () => {
-
-  if (pos.value % 20 == 0) {
-    currentColor.value = colors[Math.floor(Math.random() * colors.length)]
-  }
-  
+const draw = () => {
   var contextV = context.value
   var canvas = myCanvas.value
   var vo = props.videoOptions
 
   const { width, height } = canvas.getBoundingClientRect()
-  
+
   contextV.clearRect(0, 0, width, height)
 
   contextV.beginPath()
@@ -69,13 +63,21 @@ const loop = () => {
   contextV.fillStyle = vo.foregroundColor
   contextV.font = "30px Arial"
   contextV.fillText("pos = " + pos.value, 100, 50)
+
+}
+
+const loop = () => {
+
+  if (pos.value % 20 == 0) {
+    currentColor.value = colors[Math.floor(Math.random() * colors.length)]
+  }
   
+  draw()
+
   pos.value += 1
 
-
-  
-  // console.log(pos.value)
-  // console.log(width + " " + height)
+  var canvas = myCanvas.value
+  const { width, height } = canvas.getBoundingClientRect()
 
   if (pos.value + 10 > Math.min(width, height)) {
     pos.value = 0
@@ -87,10 +89,20 @@ const loop = () => {
   // You need to do this only if you are recording a video or gif.
   if (CanvasCapture.isRecording()) CanvasCapture.recordFrame();
 
-  
+  if (rendering.value) {
+    setTimeout(loop, 0)
+  }
+
 }
 
+const renderInterval = ref(null)
+const rendering = ref(false)
+
 const startRecording = () => {
+  // Start animation loop.
+  rendering.value = true
+  setTimeout(loop, 0)
+
   let vo = props.videoOptions
   const mp4Options = {
     name: 'demo-mp4',
@@ -105,18 +117,19 @@ const startRecording = () => {
 }
 
 const stopRecording = () => {
+  rendering.value = false
+
   // debugger
   CanvasCapture.stopRecord();
   mp4Capture.value = undefined;
 }
 
-// watch(props.videoOptions, async (newVideoOptions, oldVideoOptions) => {
-//   console.log(props.videoOptions)
-// })
 watch(
   () => props.videoOptions,
   (newValue, oldValue) => {
-    console.log(newValue, oldValue)
+    if (rendering.value == false) {
+      draw()
+    }
   },
   { deep: true }
 )
