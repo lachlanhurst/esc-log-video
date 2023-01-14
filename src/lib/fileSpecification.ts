@@ -53,6 +53,10 @@ export class FileSpecificationColumn {
     this._name = name
     this._dataType = dataType
     this._unit = unit
+
+    if (this._dataType.units.includes(this._unit)) {
+      throw new Error(`Unit ${this._unit.name} is not applicable for datatype ${this._name}`);
+    }
   }
 
   get name() {
