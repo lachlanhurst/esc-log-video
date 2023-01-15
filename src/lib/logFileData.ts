@@ -1,7 +1,7 @@
 
 import { FileSpecification, FileSpecificationColumn } from './fileSpecification'
 
-class LogFileDataSeries {
+export class LogFileDataSeries {
   _column: FileSpecificationColumn
   _data: any[]
 
@@ -45,14 +45,20 @@ export class LogFileData {
   }
 
   addSeriesValue(seriesIndex:number, value: any) {
-    this._seriesList[seriesIndex].addValue(value)
+    let rawValue = Number(value)
+    let baseUnitsValue = this._seriesList[seriesIndex].column.unit.toBaseUnit(rawValue)
+    this._seriesList[seriesIndex].addValue(baseUnitsValue)
   }
 
-  get fileSpecification() {
+  get fileSpecification(): FileSpecification {
     return this._fileSpecification
   }
 
-  get seriesList() {
+  get seriesList(): LogFileDataSeries[] {
     return this._seriesList
+  }
+
+  get seriesColumns() {
+    return this._seriesList.map(s => s._column)
   }
 }

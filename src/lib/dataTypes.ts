@@ -54,7 +54,7 @@ class Speed extends DataType {
 }
 export const speed = new Speed()
 
-class Time extends DataType {
+export class Time extends DataType {
   constructor() {
     super(
       'time',

@@ -38,7 +38,14 @@ export class Unit {
     } else {
       throw new Error('Method "convert()" must be implemented for non base units units.')
     }
-    
+  }
+
+  toBaseUnit(value) {
+    if (this.isBaseUnit) {
+      return value
+    } else {
+      throw new Error('Method "toBaseUnit()" must be implemented for non base units units.')
+    }
   }
 }
 
@@ -360,6 +367,10 @@ export class Millisecond extends Unit {
 
   convert(value) {
     return value * 1000.0
+  }
+
+  toBaseUnit(value: any) {
+    return value / 1000.0
   }
 
 }

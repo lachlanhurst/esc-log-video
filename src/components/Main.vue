@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { defineComponent, ref, reactive, watch } from 'vue'
-import { QuestionOutlined, InboxOutlined, VideoCameraAddOutlined } from '@ant-design/icons-vue'
+import { QuestionOutlined, InboxOutlined, VideoCameraAddOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import { Empty } from 'ant-design-vue'
 import { message } from 'ant-design-vue'
 import { Compact } from '@ckpack/vue-color'
 
 import RenderCanvas from './RenderCanvas.vue'
+import SeriesDetail from './SeriesDetail.vue'
+import { SeriesVideoDetail } from '../lib/seriesVideoDetail'
 
 import { temperature } from '../lib/dataTypes'
 
 import { LogFileReader } from '../lib/logFile'
 import { LogFileData } from '../lib/logFileData'
+import { LogFileDataHelper } from '../lib/logFileDataHelper'
 
 const renderCanvas = ref()
 
@@ -52,6 +56,7 @@ const fileList = ref([])
 const reading = ref(false)
 const readingProgress = ref(0)
 const logFileData = ref<null | LogFileData>(null)
+const logFileDataHelper = ref<LogFileDataHelper>(new LogFileDataHelper())
 
 const handleChange = info => {
   if (info.file.status !== 'uploading') {
@@ -67,6 +72,7 @@ const handleChange = info => {
       reading.value = false
       readingProgress.value = 0
       logFileData.value = data
+      logFileDataHelper.value.logFileData = data
     })
 
 
@@ -104,9 +110,31 @@ const updateColor = (color, colorAttribute) => {
   videoOptions[colorAttribute] = color.hex
 }
 
+const seriesVideoDetails = ref<SeriesVideoDetail[]>([])
+const addSeriesVideoDetails = () => {
+  seriesVideoDetails.value.push({
+    column: null,
+    unit: null,
+    name: ''
+  })
+}
+
+
+
+
+
+
 // watch(videoOptions, async (newVideoOptions, oldVideoOptions) => {
 //   console.log(newVideoOptions)
 // })
+
+watch(
+  () => videoOptions,
+  (newValue, oldValue) => {
+    logFileDataHelper.value.fps = newValue.fps
+  },
+  { deep: true }
+)
 
 
 </script>
@@ -180,13 +208,51 @@ const updateColor = (color, colorAttribute) => {
 
 
 
+              <div style="width: 100%">
+                <a-card style="width: 100%">
+                  <a-card-meta title="Data series" description="Specify which series in VESC log data will be rendered to video">
+                  </a-card-meta>
+                </a-card>
+                
+                <SeriesDetail
+                  v-for="seriesVideoDetail in seriesVideoDetails"
+                  :series-video-detail="seriesVideoDetail"
+                  :seriesVideoDetailList="seriesVideoDetails"
+                  :available-columns="logFileData?.seriesColumns"
+                  style="margin-bottom: 2px; margin-top: 2px;"
+                />
+                
+                <Empty v-if="!logFileData" :image="Empty.PRESENTED_IMAGE_SIMPLE">
+                  <template #description>
+                    <span>
+                      No data - open log file to view available series
+                    </span>
+                  </template>
+                </Empty>
+                <Empty v-else-if="seriesVideoDetails.length == 0" :image="Empty.PRESENTED_IMAGE_SIMPLE">
+                  <template #description>
+                    <span>
+                      No data - add a new data series using the button below
+                    </span>
+                  </template>
+                </Empty>
+                
+                <a-card>
+                  <a-row justify="end">
+                    <a-button type="primary" shape="round" @click="addSeriesVideoDetails">
+                      <template #icon>
+                        <PlusOutlined />
+                      </template>
+                      Add series
+                    </a-button>
+                  </a-row>
 
+                </a-card>
 
-              <a-card title="Data fields" style="width: 100%">
-                <p>Specify which fields in VESC log data will be rendered to video</p>
-                <p>card content</p>
-                <p v-for="index in 10" :key="index">card content {{ index }}</p>
-              </a-card>
+              </div>
+
+              
+
             </a-row>
           </div>
         </a-col>
@@ -207,7 +273,12 @@ const updateColor = (color, colorAttribute) => {
           <template v-if="rightPanelTabKey === 'video'">
             <a-row class="flex render-background" align="middle" justify="center">
               <div>
-                <RenderCanvas ref="renderCanvas" :videoOptions="videoOptions"/>
+                <RenderCanvas
+                  ref="renderCanvas"
+                  :videoOptions="videoOptions"
+                  :seriesVideoDetails="seriesVideoDetails"
+                  :logFileDataHelper="logFileDataHelper"
+                />
               </div>
             </a-row>
 
