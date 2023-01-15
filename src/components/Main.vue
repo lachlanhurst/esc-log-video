@@ -8,24 +8,16 @@ import { Compact } from '@ckpack/vue-color'
 import RenderCanvas from './RenderCanvas.vue'
 import SeriesDetail from './SeriesDetail.vue'
 import { SeriesVideoDetail } from '../lib/seriesVideoDetail'
+import { VideoOptions } from '../lib/videoOptions'
 
 import { temperature } from '../lib/dataTypes'
 
 import { LogFileReader } from '../lib/logFile'
 import { LogFileData } from '../lib/logFileData'
 import { LogFileDataHelper } from '../lib/logFileDataHelper'
+import { getVisualization } from '../lib/dataTypesVisualization'
 
 const renderCanvas = ref()
-
-const testTemp = () => {
-
-  
-  let tVal = 25.5
-  for (const unit of temperature.units) {
-    console.log(` ${unit.convert(tVal)} ${unit.symbol}`)
-  }
-
-}
 
 const startRender = () => {
   renderCanvas.value?.startRecording()
@@ -102,7 +94,7 @@ const uploadFiles = ({ onSuccess, onError, file }) => {
 }
 
 
-const videoOptions = reactive({
+const videoOptions = reactive<VideoOptions>({
   fps: 30,
   backgroundColor: "black",
   foregroundColor: "white",
@@ -114,10 +106,15 @@ const updateColor = (color, colorAttribute) => {
 
 const seriesVideoDetails = ref<SeriesVideoDetail[]>([])
 const addSeriesVideoDetails = () => {
+  if (logFileData.value == null) {
+    return
+  }
   seriesVideoDetails.value.push({
-    column: null,
-    unit: null,
-    name: ''
+    column: logFileData.value!.seriesColumns[0], 
+    unit: logFileData.value!.seriesColumns[0].unit,
+    name: logFileData.value!.seriesColumns[0].name,
+    visualization: getVisualization(logFileData.value!.seriesColumns[0].dataType),
+    visualizationOptions: {},
   })
 }
 

@@ -5,9 +5,11 @@ import { CanvasCapture } from 'canvas-capture'
 
 import { SeriesVideoDetail } from '../lib/seriesVideoDetail'
 import { LogFileDataHelper } from '../lib/logFileDataHelper'
+import { CanvasRenderer } from '../lib/canvasRenderer'
+import { VideoOptions } from '../lib/videoOptions'
 
 const props = defineProps({
-  videoOptions: Object,
+  videoOptions: Object as PropType<VideoOptions>,
   seriesVideoDetails: Array as PropType<SeriesVideoDetail[]>,
   logFileDataHelper: Object as PropType<LogFileDataHelper>,
 })
@@ -32,6 +34,7 @@ const canvasAction = ref('playing')
 const renderCanvas = ref<HTMLCanvasElement | null>(null)
 const context = ref<CanvasRenderingContext2D | null>(null)
 const mp4Capture = ref<CanvasCapture.ACTIVE_CAPTURE | undefined>(undefined)
+let canvasRenderer: CanvasRenderer | null = null
 
 onMounted(() => {
   CanvasCapture.init(renderCanvas.value!, {
@@ -43,37 +46,26 @@ onMounted(() => {
 
   context.value = renderCanvas.value!.getContext("2d")
 
+  canvasRenderer = new CanvasRenderer(
+    props.logFileDataHelper!,
+    props.seriesVideoDetails!,
+    context.value!,
+    props.videoOptions!
+  )
+
+  draw()
   // playLoop()
 })
 
 
-var currentColor = ref("red")
-let pos = ref(0)
-
 const draw = () => {
-  var contextV = context.value!
-  var canvas = renderCanvas.value
-  var vo = props.videoOptions
 
-  const { width, height } = canvas!.getBoundingClientRect()
+  let size = canvasRenderer!.calculateSize()
+  renderCanvas.value!.width = size.width
+  renderCanvas.value!.height = size.height
 
-  contextV.clearRect(0, 0, width, height)
+  canvasRenderer?.draw()
 
-  contextV.beginPath()
-  contextV.fillStyle = vo!.backgroundColor
-  contextV.fillRect(0, 0, width, height);
-  contextV.beginPath()
-  contextV.fillStyle = currentColor.value
-  contextV.fillRect(pos.value, pos.value, 10, 10)
-  contextV.fillStyle = vo!.foregroundColor
-  contextV.font = "30px Arial"
-  contextV.fillText("pos = " + pos.value, 100, 50)
-
-  let lfdh = props.logFileDataHelper!
-  if (lfdh.timeSeries) {
-    let txt = lfdh.getValue(lfdh.timeSeries.column, lfdh.timeSeries.column.unit)
-    contextV.fillText(`t = ${txt}`, 30, 90)
-  }
 }
 
 const playLoop = () => {
@@ -88,8 +80,6 @@ const playLoop = () => {
     props.logFileDataHelper!.reset()
   }
 
-  pos.value += 1
-
   requestAnimationFrame(playLoop)
 }
 
@@ -103,8 +93,6 @@ const renderLoop = () => {
       message: "Rendering frames"
     }
   )
-
-  pos.value += 1
 
   // You need to do this only if you are recording a video or gif.
   if (CanvasCapture.isRecording()) CanvasCapture.recordFrame();
@@ -170,6 +158,16 @@ const stopRecording = () => {
 
 watch(
   () => props.videoOptions,
+  (newValue, oldValue) => {
+    if (canvasAction.value != CanvasActions.rendering) {
+      draw()
+    }
+  },
+  { deep: true }
+)
+
+watch(
+  () => props.seriesVideoDetails,
   (newValue, oldValue) => {
     if (canvasAction.value != CanvasActions.rendering) {
       draw()

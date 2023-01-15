@@ -1,14 +1,12 @@
 <script setup lang="ts">
 
 import { onMounted, ref, PropType, watch, reactive, computed } from 'vue'
+import { CaretDownFilled, CaretUpFilled, DeleteOutlined } from '@ant-design/icons-vue'
 
 import { FileSpecificationColumn } from '../lib/fileSpecification'
 import { Unit } from '../lib/units'
-import { SeriesVideoDetail } from '../lib/SeriesVideoDetail'
-import { string } from 'vue-types';
-import { CaretDownFilled, CaretUpFilled, DeleteOutlined } from '@ant-design/icons-vue';
-
-
+import { SeriesVideoDetail } from '../lib/seriesVideoDetail'
+import { allVisualizations, DataTypeVisualization, getVisualization } from '../lib/dataTypesVisualization'
 
 
 const props = defineProps({
@@ -40,19 +38,34 @@ const unitOptions = computed(() => {
   })
 })
 
+
+
+const visualizationOptions = computed(() => {
+  if (!props.seriesVideoDetail!.column) {
+    return []
+  }
+
+  let visOptions = allVisualizations.filter((vis) => {
+    return vis.supportsDataType(props.seriesVideoDetail!.column!.dataType)
+  }).map(vis => {
+    return {
+      value: vis.name,
+      label: vis.name,
+      visualization: vis
+    }
+  })
+  return visOptions
+})
+
+
 onMounted(() => {
   if (props.availableColumns && props.availableColumns.length > 0) {
     if (props.seriesVideoDetail) {
-      props.seriesVideoDetail.column = props.availableColumns[0]
       selectedSeriesName.value = props.seriesVideoDetail.column!.name
-      props.seriesVideoDetail.name = props.seriesVideoDetail.column!.name
-
-      
-      props.seriesVideoDetail.unit = props.seriesVideoDetail.column!.dataType.units[0]
-      selectedUnitName.value = props.seriesVideoDetail.unit.name
+      selectedUnitName.value = props.seriesVideoDetail.column!.dataType.units[0].name
+      selectedVisName.value = props.seriesVideoDetail.visualization!.name
     }
   }
-
 })
 
 const selectedSeriesName = ref<string | null>(null)
@@ -60,24 +73,29 @@ const seriesSelected = (seriesName) => {
   selectedSeriesName.value = seriesName
   props.seriesVideoDetail!.name = seriesName
 
-  for (let {value, label, column} of seriesOptions.value) {
-    if (value == seriesName) {
-      props.seriesVideoDetail!.column = column
-      props.seriesVideoDetail!.unit = props.seriesVideoDetail!.column!.dataType.units[0]
-      selectedUnitName.value = props.seriesVideoDetail!.unit.name
-    }
-  }
+  let so = seriesOptions.value.find(series => series.column.name == seriesName)
+  props.seriesVideoDetail!.column = so!.column
+  props.seriesVideoDetail!.unit = so!.column.unit
+  selectedUnitName.value = so!.column.unit.name
+  props.seriesVideoDetail!.visualization = getVisualization(so!.column.dataType)
+  selectedVisName.value = props.seriesVideoDetail!.visualization.name
 }
 
 const selectedUnitName = ref<string | null>(null)
 const unitSelected = (unitName) => {
   selectedUnitName.value = unitName
 
-  for (let { value, label, unit } of unitOptions.value) {
-    if (value == unitName) {
-      props.seriesVideoDetail!.unit = unit
-    }
-  }
+  let uo = unitOptions.value.find(unit => unit.unit.name == unitName )
+  props.seriesVideoDetail!.unit = uo!.unit
+}
+
+
+const selectedVisName = ref<string | null>(null)
+const visSelected = (visName) => {
+  selectedVisName.value = visName
+
+  let suo = visualizationOptions.value.find(su => su.visualization.name == visName)
+  props.seriesVideoDetail!.visualization = suo!.visualization
 }
 
 function array_move(arr, old_index, new_index) {
@@ -108,10 +126,10 @@ watch(
     console.log(newValue)
     selectedUnitName.value = newValue!.unit!.name
     selectedSeriesName.value = newValue!.column!.name
+    selectedVisName.value = newValue!.visualization!.name
   },
   { deep: true }
 )
-
 
 
 </script>
@@ -122,7 +140,7 @@ watch(
   <a-card>
     <a-row type="flex">
       <a-col flex="380px">
-        <a-form :model="props.seriesVideoDetail" name="basic" layout="horizontal" :label-col="{ span: 4 }"
+        <a-form :model="props.seriesVideoDetail" name="basic" layout="horizontal" :label-col="{ span: 5 }"
           :wrapper-col="{ span: 18 }">
           <a-form-item label="Series" name="series" class="form-margin">
             <a-select :value="selectedSeriesName" @change="seriesSelected($event)" :options="seriesOptions">
@@ -133,6 +151,9 @@ watch(
           </a-form-item>
           <a-form-item name="label" label="Label" class="form-margin">
             <a-input v-model:value="props.seriesVideoDetail!.name" placeholder="Series label" />
+          </a-form-item>
+          <a-form-item name="visualization" label="Display as" class="form-margin">
+            <a-select :value="selectedVisName" @change="visSelected($event)" :options="visualizationOptions"/>
           </a-form-item>
         </a-form>
       </a-col>

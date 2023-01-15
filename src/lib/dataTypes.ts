@@ -83,3 +83,12 @@ class Current extends DataType {
   }
 }
 export const current = new Current()
+
+export const allDataTypes = [
+  temperature,
+  distance,
+  speed,
+  time,
+  voltage,
+  current,
+]
