@@ -28,6 +28,15 @@ export class Unit {
   }
 
   /**
+   * Converts the value into a formatted string version of the value
+   * @param value
+   * @returns
+   */
+  format(value: any): string {
+    return `${value}`
+  }
+
+  /**
    * Converts the given value (value must be in base units) into this unit
    * @param {*} value value to convert
    * @returns converted value in this units
@@ -61,6 +70,10 @@ class DegreeCelsius extends Unit{
       true
     )
   }
+
+  format(value: any): string {
+    return Number(value).toFixed(1)
+  }
 }
 
 class DegreeFahrenheit extends Unit {
@@ -75,6 +88,10 @@ class DegreeFahrenheit extends Unit {
 
   convert(value) {
     return (value * 1.8) + 32
+  }
+
+  format(value: any): string {
+    return Number(value).toFixed(1)
   }
 }
 
@@ -214,6 +231,9 @@ export class Volt extends Unit {
     )
   }
 
+  format(value: any): string {
+    return Number(value).toFixed(1)
+  }
 }
 
 export const volt = new Volt()
@@ -232,6 +252,9 @@ export class Ampere extends Unit {
     )
   }
 
+  format(value: any): string {
+    return Number(value).toFixed(1)
+  }
 }
 
 export const ampere = new Ampere()

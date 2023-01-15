@@ -14,7 +14,7 @@ export class CanvasRenderer {
   _videoOptions: VideoOptions
 
   _outerPadding: number = 8
-  _verticalBetweenPadding: number = 4
+  _verticalBetweenPadding: number = 6
 
   constructor(
     logFileDataHelper: LogFileDataHelper,
@@ -45,9 +45,9 @@ export class CanvasRenderer {
     let maxVisWidth = 0
     for (let svd of drawableSeries) {
       let vis = svd.visualization!
-      height += vis.height
+      height += vis.height(svd)
 
-      maxVisWidth = Math.max(maxVisWidth, vis.width)
+      maxVisWidth = Math.max(maxVisWidth, vis.width(svd))
 
       if (svd != this._seriesVideoDetails[0]) {
         height += this._verticalBetweenPadding
@@ -88,11 +88,11 @@ export class CanvasRenderer {
 
 
     for (let svd of drawableSeries) {
-
+      let value = this._logFileDataHelper!.getValue(svd.column, svd.unit)
       let vis = svd.visualization!
-      vis.draw(this._context, posX, posY)
+      vis.draw(this._context, this._videoOptions, svd, posX, posY, value)
 
-      posY += vis.height
+      posY += vis.height(svd)
       posY += this._verticalBetweenPadding
     }
 
