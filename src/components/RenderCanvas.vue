@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch, PropType } from 'vue'
+import { onMounted, ref, watch, PropType, defineEmits } from 'vue'
 
 import { CanvasCapture } from 'canvas-capture'
 
@@ -12,6 +12,15 @@ const props = defineProps({
   logFileDataHelper: Object as PropType<LogFileDataHelper>,
 })
 
+interface RenderProgress {
+  value: number,
+  message: string
+}
+
+const emit = defineEmits<{
+  (e: 'renderProgress', progress: RenderProgress): void
+}>()
+
 const CanvasActions = {
   playing: 'playing',
   rendering: 'rendering',
@@ -22,7 +31,7 @@ const canvasAction = ref('playing')
 
 const renderCanvas = ref<HTMLCanvasElement | null>(null)
 const context = ref<CanvasRenderingContext2D | null>(null)
-const mp4Capture = ref <CanvasCapture.ACTIVE_CAPTURE | undefined>(undefined)
+const mp4Capture = ref<CanvasCapture.ACTIVE_CAPTURE | undefined>(undefined)
 
 onMounted(() => {
   CanvasCapture.init(renderCanvas.value!, {
@@ -34,7 +43,7 @@ onMounted(() => {
 
   context.value = renderCanvas.value!.getContext("2d")
 
-  playLoop()
+  // playLoop()
 })
 
 
@@ -85,8 +94,15 @@ const playLoop = () => {
 }
 
 const renderLoop = () => {
-
   draw()
+
+  emit(
+    'renderProgress',
+    {
+      value: props.logFileDataHelper!.progress(),
+      message: "Rendering frames"
+    }
+  )
 
   pos.value += 1
 
@@ -121,8 +137,18 @@ const startRecording = () => {
     format: CanvasCapture.MP4,
     quality: 1,
     fps: vo.fps,
-    onExportProgress: (progress) => console.log(`MP4 export progress: ${progress}.`),
-    onExportFinish: () => console.log(`Finished MP4 export.`),
+    onExportProgress: (progress) => {
+      emit(
+        'renderProgress',
+        {value: progress, message: "Generating MP4"}
+      )
+    },
+    onExportFinish: () => {
+      emit(
+        'renderProgress',
+        { value: 0, message: "" }
+      )
+    },
     // ffmpegOptions: {
     //   '-c:v': 'libx264',
     //   '-preset': 'slow',
@@ -142,16 +168,25 @@ const stopRecording = () => {
   mp4Capture.value = undefined;
 }
 
-// watch(
-//   () => props.videoOptions,
-//   (newValue, oldValue) => {
-//     if (rendering.value == false) {
-//       draw()
-//     }
-//   },
-//   { deep: true }
-// )
+watch(
+  () => props.videoOptions,
+  (newValue, oldValue) => {
+    if (canvasAction.value != CanvasActions.rendering) {
+      draw()
+    }
+  },
+  { deep: true }
+)
 
+
+watch(
+  () => props.logFileDataHelper?._logFileData,
+  (newValue, oldValue) => {
+    if (canvasAction.value != CanvasActions.rendering) {
+      draw()
+    }
+  }
+)
 
 defineExpose({
   startRecording,

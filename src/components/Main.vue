@@ -55,6 +55,8 @@ const onRightPanelTabChange = (value: string) => {
 const fileList = ref([])
 const reading = ref(false)
 const readingProgress = ref(0)
+const renderProgress = ref<number>(0.0)
+const renderProgressMessage = ref<string>("")
 const logFileData = ref<null | LogFileData>(null)
 const logFileDataHelper = ref<LogFileDataHelper>(new LogFileDataHelper())
 
@@ -119,10 +121,11 @@ const addSeriesVideoDetails = () => {
   })
 }
 
-
-
-
-
+const handleRenderProgress = (e) => {
+  renderProgress.value = e.value
+  renderProgressMessage.value = e.message
+  console.log(e)
+}
 
 // watch(videoOptions, async (newVideoOptions, oldVideoOptions) => {
 //   console.log(newVideoOptions)
@@ -202,8 +205,6 @@ watch(
                   </a-form-item>
 
                 </a-form>
-
-
               </a-card>
 
 
@@ -278,6 +279,7 @@ watch(
                   :videoOptions="videoOptions"
                   :seriesVideoDetails="seriesVideoDetails"
                   :logFileDataHelper="logFileDataHelper"
+                  @render-progress="handleRenderProgress($event)"
                 />
               </div>
             </a-row>
@@ -295,7 +297,8 @@ watch(
               </a-col>
 
               <a-col flex="auto" class="gutter-row">
-                <a-progress :percent="50" status="active" />
+                <div> {{ renderProgressMessage }}</div>
+                <a-progress :percent="renderProgress * 100" status="active" :showInfo="false"/>
               </a-col>
 
             </a-row>

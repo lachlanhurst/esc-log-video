@@ -36,6 +36,19 @@ export class LogFileDataHelper {
     return this._timeSeries
   }
 
+  /**
+   * Progress of the log file helper through the total duration of the
+   * data set. This is based on times, not the array index to give better
+   * indication of progress to users where time steps in array may be
+   * large.
+   * @returns number between 0 and 1
+   */
+  progress(): number {
+    let dtTotal = this._endTime - this._startTime
+    let dtCurrent = this._currentTime - this._startTime
+    return dtCurrent / dtTotal
+  }
+
   set logFileData(value: LogFileData) {
     this._logFileData = value
     this._currentTime = 0
