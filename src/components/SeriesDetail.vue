@@ -62,7 +62,7 @@ onMounted(() => {
   if (props.availableColumns && props.availableColumns.length > 0) {
     if (props.seriesVideoDetail) {
       selectedSeriesName.value = props.seriesVideoDetail.column!.name
-      selectedUnitName.value = props.seriesVideoDetail.column!.dataType.units[0].name
+      selectedUnitName.value = props.seriesVideoDetail.unit.name
       selectedVisName.value = props.seriesVideoDetail.visualization!.name
     }
   }
