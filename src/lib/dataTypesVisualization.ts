@@ -241,6 +241,29 @@ class BarChart extends DataTypeVisualization {
     max = seriesVideoDetails.unit.convert(max)
     cache.min = min
     cache.max = max
+
+    let tile = new OffscreenCanvas(10, 10) //document.createElement('canvas')
+    // tile.width = tile.height = 10
+    let ctx = tile.getContext('2d')!
+    let gradient = ctx.createLinearGradient(0, 0, tile.width, tile.height);
+    let colorStops = [
+      [0, videoOptions.backgroundColor],
+      [0.35, videoOptions.backgroundColor],
+      [0.35, videoOptions.foregroundColor],
+      [0.5, videoOptions.foregroundColor],
+      [0.5, videoOptions.backgroundColor],
+      [0.85, videoOptions.backgroundColor],
+      [0.85, videoOptions.foregroundColor],
+      [1, videoOptions.foregroundColor]
+    ]
+    colorStops.forEach(element => {
+      gradient.addColorStop(element[0] as number, element[1] as string)
+    })
+
+    ctx.fillStyle = gradient
+    ctx.fillRect(0, 0, tile.width, tile.height)
+
+    cache.hatch = tile
   }
 
   draw(
@@ -275,8 +298,22 @@ class BarChart extends DataTypeVisualization {
       y += this._padding
     }
 
+    let dRange = cache.max - cache.min
+    let dValue = value - cache.min
+    let fraction = dValue / dRange
+    let valueWidth = fraction * this._width
+
+    let tilePattern = context.createPattern(cache.hatch, 'repeat')!
+    context.fillStyle = tilePattern
+    context.fillRect(
+      this.absX(0, baseX),
+      this.absY(y, baseY),
+      valueWidth,
+      this._barHeight)
+
     context.beginPath()
     context.strokeStyle = videoOptions.foregroundColor
+    context.lineWidth = 2
     context.rect(
       this.absX(0, baseX),
       this.absY(y, baseY),
@@ -284,19 +321,15 @@ class BarChart extends DataTypeVisualization {
       this._barHeight)
     context.stroke()
 
-    let dRange = cache.max - cache.min
-    let dValue = value - cache.min
-    let fraction = dValue / dRange
-    let valueWidth = fraction * this._width
-
     context.beginPath()
     context.strokeStyle = videoOptions.foregroundColor
+    context.fillStyle = videoOptions.foregroundColor
     context.rect(
-      this.absX(0, baseX),
+      this.absX(valueWidth-1, baseX),
       this.absY(y, baseY),
-      valueWidth,
+      3,
       this._barHeight)
-    context.stroke()
+    context.fill()
 
   }
 
