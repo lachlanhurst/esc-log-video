@@ -53,8 +53,9 @@ onMounted(() => {
     props.videoOptions!
   )
 
-  draw()
-  // playLoop()
+  // draw()
+  canvasAction.value = CanvasActions.playing
+  playLoop()
 })
 
 
@@ -69,18 +70,24 @@ const draw = () => {
 }
 
 const playLoop = () => {
-  if (canvasAction.value != CanvasActions.playing) {
-    return
-  }
 
-  draw()
+  setTimeout(function () { //throttle requestAnimationFrame to fps
 
-  let incrementSuccess = props.logFileDataHelper!.incrementCurrentTime()
-  if (!incrementSuccess) {
-    props.logFileDataHelper!.reset()
-  }
+    if (canvasAction.value != CanvasActions.playing) {
+      return
+    }
 
-  requestAnimationFrame(playLoop)
+    draw()
+
+    let incrementSuccess = props.logFileDataHelper!.incrementCurrentTime()
+    if (!incrementSuccess) {
+      props.logFileDataHelper!.reset()
+    }
+
+
+    requestAnimationFrame(playLoop)
+  }, 1000 / props.videoOptions!.fps)
+
 }
 
 const renderLoop = () => {
