@@ -100,7 +100,7 @@ const renderLoop = () => {
   let incrementSuccess = props.logFileDataHelper!.incrementCurrentTime()
 
   if (canvasAction.value == CanvasActions.rendering && incrementSuccess) {
-    setTimeout(renderLoop, 0)
+    requestAnimationFrame(renderLoop)
   }
 
   if (!incrementSuccess) {
