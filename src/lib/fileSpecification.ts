@@ -33,6 +33,15 @@ export class FileSpecification {
   get columns() {
     return this._columns
   }
+
+  /**
+   * Returns the column with the given name or undefined of not found
+   * @param label 
+   * @returns 
+   */
+  columnForLabel(label: string): FileSpecificationColumn | undefined {
+    return this._columns.find(col => col.label == label)
+  }
 }
 
 export class FileSpecificationColumn {
