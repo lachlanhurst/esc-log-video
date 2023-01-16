@@ -85,9 +85,9 @@ export class DataTypeVisualization {
 
 
 class LabelAndValue extends DataTypeVisualization {
-  _labelSize: number = 20
-  _valueSize: number = 60
-  _unitSize: number = 30
+  _labelSize: number = 22
+  _valueSize: number = 64
+  _unitSize: number = 32
   _padding: number = 6
 
   constructor() {
@@ -96,7 +96,7 @@ class LabelAndValue extends DataTypeVisualization {
       allDataTypes,
       []
     )
-    this._width = 300
+    this._width = 260
   }
 
   height(seriesVideoDetail: SeriesVideoDetail): number {
