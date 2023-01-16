@@ -58,7 +58,7 @@ export class LogFileData {
     return this._seriesList
   }
 
-  get seriesColumns() {
+  get seriesColumns(): FileSpecificationColumn[] {
     return this._seriesList.map(s => s._column)
   }
 }
