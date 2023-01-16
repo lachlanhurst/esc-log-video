@@ -18,7 +18,7 @@ export const getDummyData = <LogFileData>() => {
   let motorTempSeriesIndex = lfd.addSeries(motorTempCol)
   let mosTempSeriesIndex = lfd.addSeries(mosTempCol)
 
-  for (let i = 0; i < 300; i++) {
+  for (let i = 0; i < 500; i++) {
     lfd.addSeriesValue(timeSeriesIndex, i * 10)
 
     lfd.addSeriesValue(motorAmpsSeriesIndex, 75 + Math.random() * 10)
