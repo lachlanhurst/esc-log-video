@@ -1,6 +1,7 @@
 import { LogFileDataHelper } from './logFileDataHelper'
 import { SeriesVideoDetail } from './SeriesVideoDetail'
 import { VideoOptions } from './videoOptions'
+import { CacheObject } from './dataTypesVisualization'
 
 interface Size {
   width: number
@@ -10,6 +11,7 @@ interface Size {
 export class CanvasRenderer {
   _logFileDataHelper: LogFileDataHelper | null
   _seriesVideoDetails: SeriesVideoDetail[]
+  _seriesVideoDetailCaches: CacheObject[] = []
   _context: CanvasRenderingContext2D
   _videoOptions: VideoOptions
 
@@ -26,6 +28,19 @@ export class CanvasRenderer {
     this._seriesVideoDetails = seriesVideoDetails
     this._context = context
     this._videoOptions = videoOptions
+  }
+
+  initialize():void {
+    this._seriesVideoDetailCaches = []
+
+    for (let svd of this._seriesVideoDetails) {
+      let cache: CacheObject = {}
+      this._seriesVideoDetailCaches.push(cache)
+      let vis = svd.visualization
+
+      let series = this._logFileDataHelper!.logFileData.seriesForColumn(svd.column)!
+      vis.initialize(cache, series, svd, this._videoOptions)
+    }
   }
 
   calculateSize(): Size {
@@ -82,21 +97,20 @@ export class CanvasRenderer {
     posX += this._outerPadding
     posY += this._outerPadding
 
-    let drawableSeries = this._seriesVideoDetails.filter((svd) => {
-      return svd.visualization != null
-    })
 
+    for (let i = 0; i < this._seriesVideoDetails.length; i++) {
+      let svd = this._seriesVideoDetails[i]
+      let cache = this._seriesVideoDetailCaches[i]
 
-    for (let svd of drawableSeries) {
       let value = this._logFileDataHelper!.getValue(svd.column, svd.unit)
       let vis = svd.visualization!
-      vis.draw(this._context, this._videoOptions, svd, posX, posY, value)
+      vis.draw(this._context, this._videoOptions, svd, cache, posX, posY, value)
 
       posY += vis.height(svd)
       posY += this._verticalBetweenPadding
     }
 
-    if (drawableSeries.length == 0) {
+    if (this._seriesVideoDetails.length == 0) {
       this.drawNoData()
     }
 

@@ -2,6 +2,7 @@
 import { DataType, allDataTypes, time } from './dataTypes'
 import { VideoOptions } from './videoOptions'
 import { SeriesVideoDetail } from './SeriesVideoDetail'
+import { LogFileDataSeries } from './logFileData'
 
 export class DataTypeVisualizationOption {
   _dataType: string
@@ -9,6 +10,9 @@ export class DataTypeVisualizationOption {
   _options: string[]
 }
 
+export interface CacheObject {
+  [key: string]: any
+}
 
 /**
  * Data type visualization is a class that is responsible for drawing a specific
@@ -56,10 +60,29 @@ export class DataTypeVisualization {
     return baseY + yRel
   }
 
+  /**
+   * Function is called after each change to the data, VideoOptions, or
+   * SeriesVideoDetails. You should do any initialization of details needed
+   * to draw this visualization here and add those details to the `cache`
+   * object. We cant change the vis itself as this causes a reactive/recursive
+   * issue.
+   * @param cache
+   */
+  initialize(
+    cache: CacheObject,
+    logFileDataSeries: LogFileDataSeries,
+    seriesVideoDetails: SeriesVideoDetail,
+    videoOptions: VideoOptions
+  ): void {
+    // nothing to do in base class, override if needed
+    // console.log("init " + seriesVideoDetails.visualization.name + " " + seriesVideoDetails.name)
+  }
+
   draw(
     context: CanvasRenderingContext2D,
     videoOptions: VideoOptions,
     seriesVideoDetail: SeriesVideoDetail,
+    cache: CacheObject,
     baseX: number,
     baseY: number,
     value: any
@@ -114,6 +137,7 @@ class LabelAndValue extends DataTypeVisualization {
     context: CanvasRenderingContext2D,
     videoOptions: VideoOptions,
     seriesVideoDetail: SeriesVideoDetail,
+    cache: CacheObject,
     baseX: number,
     baseY: number,
     value: any
@@ -179,6 +203,108 @@ class LabelAndValue extends DataTypeVisualization {
 }
 const labelAndValue = new LabelAndValue()
 
+
+class BarChart extends DataTypeVisualization {
+  _labelSize: number = 22
+  _padding: number = 6
+  _barHeight: number = 46
+
+  constructor() {
+    super(
+      'Bar chart',
+      allDataTypes,
+      []
+    )
+    this._width = 260
+  }
+
+  height(seriesVideoDetail: SeriesVideoDetail): number {
+    let h: number = 0
+    if (seriesVideoDetail.name.length != 0) {
+      h += this._labelSize
+      h += this._padding
+    }
+    h += this._barHeight
+    return h
+  }
+
+  initialize(
+    cache: CacheObject,
+    logFileDataSeries: LogFileDataSeries,
+    seriesVideoDetails: SeriesVideoDetail,
+    videoOptions: VideoOptions
+  ): void {
+    // need to get and store the min/max values so we can draw the chart
+    let min = Math.min(...logFileDataSeries.data)
+    let max = Math.max(...logFileDataSeries.data)
+    min = seriesVideoDetails.unit.convert(min)
+    max = seriesVideoDetails.unit.convert(max)
+    cache.min = min
+    cache.max = max
+  }
+
+  draw(
+    context: CanvasRenderingContext2D,
+    videoOptions: VideoOptions,
+    seriesVideoDetail: SeriesVideoDetail,
+    cache: CacheObject,
+    baseX: number,
+    baseY: number,
+    value: any
+  ): void {
+    let valueText = seriesVideoDetail.unit.format(value)
+    // context.beginPath()
+    // context.strokeStyle = "red"
+    // context.rect(this.absX(0, baseX), this.absY(0, baseY), this.width(seriesVideoDetail), this.height(seriesVideoDetail))
+    // context.stroke()
+
+    let y = 0
+
+    if (seriesVideoDetail.name.length != 0) {
+      y += this._labelSize
+      context.beginPath()
+      context.fillStyle = videoOptions.foregroundColor
+      context.textAlign = 'start'
+      context.letterSpacing = "-2px"
+      context.font = `${this._labelSize}px Helvetica`
+      context.fillText(
+        seriesVideoDetail.name,
+        this.absX(0, baseX),
+        this.absY(y, baseY),
+      )
+      y += this._padding
+    }
+
+    context.beginPath()
+    context.strokeStyle = videoOptions.foregroundColor
+    context.rect(
+      this.absX(0, baseX),
+      this.absY(y, baseY),
+      this._width,
+      this._barHeight)
+    context.stroke()
+
+    let dRange = cache.max - cache.min
+    let dValue = value - cache.min
+    let fraction = dValue / dRange
+    let valueWidth = fraction * this._width
+
+    context.beginPath()
+    context.strokeStyle = videoOptions.foregroundColor
+    context.rect(
+      this.absX(0, baseX),
+      this.absY(y, baseY),
+      valueWidth,
+      this._barHeight)
+    context.stroke()
+
+  }
+
+}
+const barChart = new BarChart()
+
+
+
 class OnlyTime extends DataTypeVisualization {
 
   constructor() {
@@ -195,6 +321,7 @@ class OnlyTime extends DataTypeVisualization {
     context: CanvasRenderingContext2D,
     videoOptions: VideoOptions,
     seriesVideoDetail: SeriesVideoDetail,
+    cache: CacheObject,
     baseX: number,
     baseY: number,
     value: any
@@ -227,7 +354,8 @@ const noViz = new NoVisualization()
 
 export const allVisualizations: DataTypeVisualization[] = [
   labelAndValue,
-  onlyTime
+  barChart,
+  onlyTime,
 ]
 
 export const getVisualization = (dataType: DataType): DataTypeVisualization => {

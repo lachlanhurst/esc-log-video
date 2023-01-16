@@ -67,6 +67,10 @@ export class LogFileDataHelper {
     throw new Error('No time based data series found')
   }
 
+  get logFileData() {
+    return this._logFileData!
+  }
+
   /**
    * Resets the helper back to the start
    */

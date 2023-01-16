@@ -58,6 +58,10 @@ export class LogFileData {
     return this._seriesList
   }
 
+  seriesForColumn(column: FileSpecificationColumn): LogFileDataSeries | undefined {
+    return this._seriesList.find((series) => series.column == column)
+  }
+
   get seriesColumns(): FileSpecificationColumn[] {
     return this._seriesList.map(s => s._column)
   }

@@ -166,6 +166,7 @@ const stopRecording = () => {
 watch(
   () => props.videoOptions,
   (newValue, oldValue) => {
+    canvasRenderer?.initialize()
     if (canvasAction.value != CanvasActions.rendering) {
       draw()
     }
@@ -176,6 +177,7 @@ watch(
 watch(
   () => props.seriesVideoDetails,
   (newValue, oldValue) => {
+    canvasRenderer?.initialize()
     if (canvasAction.value != CanvasActions.rendering) {
       draw()
     }
@@ -187,6 +189,7 @@ watch(
 watch(
   () => props.logFileDataHelper?._logFileData,
   (newValue, oldValue) => {
+    canvasRenderer?.initialize()
     if (canvasAction.value != CanvasActions.rendering) {
       draw()
     }
