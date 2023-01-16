@@ -13,6 +13,8 @@ export class FileSpecification {
   _name: string
   _delimiter: string
   _columns: FileSpecificationColumn[]
+  // columns that will be automatically added to UI when data has been loaded
+  _defaultColumns: FileSpecificationColumn[]
 
   /**
    * 
@@ -20,10 +22,16 @@ export class FileSpecification {
    * @param delimiter the character used as a delimiter in the CSV (eg; ',' ';')
    * @param columns The columns that are included in this log data
    */
-  constructor(name: string, delimiter: string, columns: FileSpecificationColumn[]) {
+  constructor(
+    name: string,
+    delimiter: string,
+    columns: FileSpecificationColumn[],
+    defaultColumns: FileSpecificationColumn[] = []
+  ) {
     this._name = name
     this._columns = columns
     this._delimiter = delimiter
+    this._defaultColumns = defaultColumns
   }
 
   get delimiter() {
@@ -32,6 +40,13 @@ export class FileSpecification {
 
   get columns() {
     return this._columns
+  }
+
+  /**
+   * List of columns that are automatically added to UI
+   */
+  get defaultColumns() {
+    return this._defaultColumns
   }
 
   /**
@@ -86,46 +101,52 @@ export class FileSpecificationColumn {
 
 }
 
+const vescColumns = [
+  new FileSpecificationColumn(
+    'ms_today',
+    'Time today',
+    dataTypes.time,
+    units.millisecond
+  ),
+  new FileSpecificationColumn(
+    'input_voltage',
+    'Input Voltage',
+    dataTypes.voltage,
+    units.volt
+  ),
+  new FileSpecificationColumn(
+    'temp_mos_max',
+    'MOSFET temperature',
+    dataTypes.temperature,
+    units.degreeCelsius
+  ),
+  new FileSpecificationColumn(
+    'temp_motor',
+    'Motor temperature',
+    dataTypes.temperature,
+    units.degreeCelsius
+  ),
+  new FileSpecificationColumn(
+    'current_motor',
+    'Motor current',
+    dataTypes.current,
+    units.ampere
+  ),
+  new FileSpecificationColumn(
+    'current_in',
+    'Battery current',
+    dataTypes.current,
+    units.ampere
+  ),
+]
+
+
 export const vescFileSpecification = new FileSpecification(
   'VESC Log File',
   ';',
+  vescColumns,
   [
-    new FileSpecificationColumn(
-      'ms_today',
-      'Time today',
-      dataTypes.time,
-      units.millisecond
-    ),
-    new FileSpecificationColumn(
-      'input_voltage',
-      'Input Voltage',
-      dataTypes.voltage,
-      units.volt
-    ),
-    new FileSpecificationColumn(
-      'temp_mos_max',
-      'MOSFET temperature',
-      dataTypes.temperature,
-      units.degreeCelsius
-    ),
-    new FileSpecificationColumn(
-      'temp_motor',
-      'Motor temperature',
-      dataTypes.temperature,
-      units.degreeCelsius
-    ),
-    new FileSpecificationColumn(
-      'current_motor',
-      'Motor current',
-      dataTypes.current,
-      units.ampere
-    ),
-    new FileSpecificationColumn(
-      'current_in',
-      'Battery current',
-      dataTypes.current,
-      units.ampere
-    ),
+    vescColumns[0], vescColumns[2], vescColumns[5], vescColumns[4]
   ]
 )
 

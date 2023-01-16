@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineComponent, ref, reactive, watch } from 'vue'
+import { defineComponent, ref, reactive, watch, onMounted } from 'vue'
 import { QuestionOutlined, InboxOutlined, VideoCameraAddOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { Empty } from 'ant-design-vue'
 import { message } from 'ant-design-vue'
@@ -16,6 +16,21 @@ import { LogFileReader } from '../lib/logFile'
 import { LogFileData } from '../lib/logFileData'
 import { LogFileDataHelper } from '../lib/logFileDataHelper'
 import { getVisualization } from '../lib/dataTypesVisualization'
+import { getDummyData } from '../lib/dummyData'
+import { FileSpecificationColumn } from '../lib/fileSpecification'
+
+
+// onMounted(() => {
+
+//   let dummyData = getDummyData()
+//   logFileData.value = dummyData
+//   logFileDataHelper.value.logFileData = dummyData
+
+//   logFileData.value.fileSpecification.defaultColumns.forEach((col) => {
+//     addColumnAsDefaultToSvd(col)
+//   })
+// })
+
 
 const renderCanvas = ref()
 
@@ -67,6 +82,10 @@ const handleChange = info => {
       readingProgress.value = 0
       logFileData.value = data
       logFileDataHelper.value.logFileData = data
+
+      logFileData.value.fileSpecification.defaultColumns.forEach((col) => {
+        addColumnAsDefaultToSvd(col)
+      })
     })
 
 
@@ -109,11 +128,15 @@ const addSeriesVideoDetails = () => {
   if (logFileData.value == null) {
     return
   }
+  addColumnAsDefaultToSvd(logFileData.value!.seriesColumns[0])
+}
+
+const addColumnAsDefaultToSvd = (column: FileSpecificationColumn) => {
   seriesVideoDetails.value.push({
-    column: logFileData.value!.seriesColumns[0], 
-    unit: logFileData.value!.seriesColumns[0].unit,
-    name: logFileData.value!.seriesColumns[0].name,
-    visualization: getVisualization(logFileData.value!.seriesColumns[0].dataType),
+    column: column,
+    unit: column.unit,
+    name: column.name,
+    visualization: getVisualization(column.dataType),
     visualizationOptions: {},
   })
 }
