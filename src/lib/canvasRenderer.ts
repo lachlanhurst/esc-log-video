@@ -1,7 +1,7 @@
 import { LogFileDataHelper } from './logFileDataHelper'
 import { SeriesVideoDetail } from './SeriesVideoDetail'
 import { VideoOptions } from './videoOptions'
-import { CacheObject } from './dataTypesVisualization'
+import { CacheObject } from './visualization/dataTypesVisualization'
 
 interface Size {
   width: number
@@ -16,7 +16,7 @@ export class CanvasRenderer {
   _videoOptions: VideoOptions
 
   _outerPadding: number = 8
-  _verticalBetweenPadding: number = 6
+  _verticalBetweenPadding: number = 8
 
   constructor(
     logFileDataHelper: LogFileDataHelper,

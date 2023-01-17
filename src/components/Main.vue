@@ -15,7 +15,7 @@ import { temperature } from '../lib/dataTypes'
 import { LogFileReader } from '../lib/logFile'
 import { LogFileData } from '../lib/logFileData'
 import { LogFileDataHelper } from '../lib/logFileDataHelper'
-import { getVisualization } from '../lib/dataTypesVisualization'
+import { getVisualization } from '../lib/visualization/visualizationUtils'
 import { getDummyData } from '../lib/dummyData'
 import { FileSpecificationColumn } from '../lib/fileSpecification'
 
