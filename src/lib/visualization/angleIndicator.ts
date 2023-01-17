@@ -7,7 +7,7 @@ import { CacheObject, DataTypeVisualization } from './dataTypesVisualization'
 
 class AngleIndicator extends DataTypeVisualization {
   _labelSize: number = 22
-  _valueSize: number = 64
+  _valueSize: number = 184
   _unitSize: number = 32
   _padding: number = 6
 
@@ -98,7 +98,11 @@ class AngleIndicator extends DataTypeVisualization {
       y += this._padding
     }
 
+
     let tilePattern = context.createPattern(cache.hatch, 'repeat')!
+    var matrix = new DOMMatrix().rotate(value * 180/Math.PI)
+    tilePattern.setTransform(matrix)
+
 
     context.beginPath()
     context.fillStyle = tilePattern
