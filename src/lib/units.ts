@@ -361,6 +361,9 @@ export class Second extends Unit {
     )
   }
 
+  format(value: any): string {
+    return Number(value).toFixed(1)
+  }
 }
 
 export class Minute extends Unit {
@@ -375,6 +378,19 @@ export class Minute extends Unit {
 
   convert(value) {
     return value / 60.0
+  }
+
+  format(value: any): string {
+    // convert to mm:ss notation
+    let minutes = Math.floor(value)
+    let seconds = (value - minutes) * 60
+
+    let extraSecondsZero = ''
+    if (seconds < 10.0) {
+      extraSecondsZero = '0'
+    }
+
+    return `${minutes}:${extraSecondsZero}${Math.floor(seconds)}`
   }
 }
 
@@ -396,6 +412,9 @@ export class Millisecond extends Unit {
     return value / 1000.0
   }
 
+  format(value: any): string {
+    return Number(value).toFixed(0)
+  }
 }
 
 export const second = new Second()
