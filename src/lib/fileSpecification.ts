@@ -138,6 +138,30 @@ const vescColumns = [
     dataTypes.current,
     units.ampere
   ),
+  new FileSpecificationColumn(
+    'encoder_position',
+    'Encoder position',
+    dataTypes.angle,
+    units.degree
+  ),
+  new FileSpecificationColumn(
+    'roll',
+    'Roll',
+    dataTypes.angle,
+    units.radian
+  ),
+  new FileSpecificationColumn(
+    'pitch',
+    'Pitch',
+    dataTypes.angle,
+    units.radian
+  ),
+  new FileSpecificationColumn(
+    'yaw',
+    'Yaw',
+    dataTypes.angle,
+    units.radian
+  ),
 ]
 
 
