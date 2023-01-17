@@ -327,6 +327,9 @@ export class Radian extends Unit {
     )
   }
 
+  format(value: any): string {
+    return Number(value).toFixed(3)
+  }
 }
 
 export class Degree extends Unit {
@@ -339,8 +342,17 @@ export class Degree extends Unit {
     )
   }
 
+  toBaseUnit(value: any) {
+    return value * (Math.PI / 180)
+  }
+
   convert(value) {
     return value * (180 / Math.PI)
+  }
+
+
+  format(value: any): string {
+    return Number(value).toFixed(1)
   }
 }
 
