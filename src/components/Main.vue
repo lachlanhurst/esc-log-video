@@ -20,16 +20,16 @@ import { getDummyData } from '../lib/dummyData'
 import { FileSpecificationColumn } from '../lib/fileSpecification'
 
 
-// onMounted(() => {
+onMounted(() => {
 
-//   let dummyData = getDummyData()
-//   logFileData.value = dummyData
-//   logFileDataHelper.value.logFileData = dummyData
+  let dummyData = getDummyData()
+  logFileData.value = dummyData
+  logFileDataHelper.value.logFileData = dummyData
 
-//   logFileData.value.fileSpecification.defaultColumns.forEach((col) => {
-//     addColumnAsDefaultToSvd(col)
-//   })
-// })
+  logFileData.value.fileSpecification.defaultColumns.forEach((col) => {
+    addColumnAsDefaultToSvd(col)
+  })
+})
 
 
 const renderCanvas = ref()
@@ -170,12 +170,12 @@ watch(
         <video-camera-add-outlined class="heading"/>
       </div>
       <a-row type="flex" justify="space-between" align="center" class="header-rhs">
-        <div class="heading">VESC Log Video</div>
+        <div class="heading">ESC Log Video</div>
         <div>
           <a-col style="line-height: normal; color: white; padding-top: 18px;">
             <a-space direction="vertical" size="12">
               <a-row justify="end">
-                <a href="https://github.com/lachlanhurst/vesc-log-video">GitHub repo</a>
+                <a href="https://github.com/lachlanhurst/esc-log-video">GitHub repo</a>
               </a-row>
               <a-row justify="end">©2023 Lachlan Hurst</a-row>
             </a-space>
