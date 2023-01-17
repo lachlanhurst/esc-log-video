@@ -84,6 +84,16 @@ class Current extends DataType {
 }
 export const current = new Current()
 
+class Angle extends DataType {
+  constructor() {
+    super(
+      'angle',
+      units.angleUnits
+    )
+  }
+}
+export const angle = new Angle()
+
 export const allDataTypes = [
   temperature,
   distance,
@@ -91,4 +101,5 @@ export const allDataTypes = [
   time,
   voltage,
   current,
+  angle,
 ]
