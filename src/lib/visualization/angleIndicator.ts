@@ -56,7 +56,22 @@ class AngleIndicator extends DataTypeVisualization {
     ctx.fillStyle = gradient
     ctx.fillRect(0, 0, tile.width, tile.height)
 
-    cache.hatch = tile
+    let rad = (this._labelSize + this._padding + this._valueSize - 18) / 2
+    let semiCircle = new OffscreenCanvas(rad*2, rad*2)
+    let context = semiCircle.getContext('2d')!
+    let tilePattern = context.createPattern(tile, 'repeat')!
+    context.beginPath()
+    context.fillStyle = tilePattern
+    context.arc(
+      rad,
+      rad,
+      rad,
+      0,
+      Math.PI
+    )
+    context.fill();
+
+    cache.semiCircle = semiCircle
   }
 
   draw(
@@ -99,21 +114,17 @@ class AngleIndicator extends DataTypeVisualization {
     }
 
 
-    let tilePattern = context.createPattern(cache.hatch, 'repeat')!
-    var matrix = new DOMMatrix().rotate(value * 180/Math.PI)
-    tilePattern.setTransform(matrix)
+    let semiCircle = cache.semiCircle
 
+    let semiCircleRotated = new OffscreenCanvas(circleDiameter, circleDiameter)
+    let semiCircleRotatedContext = semiCircleRotated.getContext('2d')!
+    semiCircleRotatedContext.translate(circleRadius, circleRadius);
+    semiCircleRotatedContext.rotate(value);
+    semiCircleRotatedContext.drawImage(semiCircle, -circleDiameter / 2, -circleDiameter / 2, circleDiameter, circleDiameter);
+    semiCircleRotatedContext.rotate(-value);
+    semiCircleRotatedContext.translate(-circleRadius, -circleRadius);
+    context.drawImage(semiCircleRotated, circleCenterX - circleRadius, circleCenterY - circleRadius)
 
-    context.beginPath()
-    context.fillStyle = tilePattern
-    context.arc(
-      circleCenterX,
-      circleCenterY,
-      circleRadius,
-      value,
-      value + Math.PI
-    )
-    context.fill();
 
     context.beginPath()
     context.strokeStyle = videoOptions.foregroundColor
@@ -140,41 +151,6 @@ class AngleIndicator extends DataTypeVisualization {
     )
     context.closePath();
     context.stroke();
-
-
-    // let dRange = cache.max - cache.min
-    // let dValue = value - cache.min
-    // let fraction = dValue / dRange
-    // let valueWidth = fraction * this._width
-
-    
-    // context.fillStyle = tilePattern
-    // context.fill
-    // context.fillRect(
-    //   this.absX(0, baseX),
-    //   this.absY(y, baseY),
-    //   valueWidth,
-    //   this._barHeight)
-
-    // context.beginPath()
-    // context.strokeStyle = videoOptions.foregroundColor
-    // context.lineWidth = 2
-    // context.rect(
-    //   this.absX(0, baseX),
-    //   this.absY(y, baseY),
-    //   this._width,
-    //   this._barHeight)
-    // context.stroke()
-
-    // context.beginPath()
-    // context.strokeStyle = videoOptions.foregroundColor
-    // context.fillStyle = videoOptions.foregroundColor
-    // context.rect(
-    //   this.absX(valueWidth - 1, baseX),
-    //   this.absY(y, baseY),
-    //   3,
-    //   this._barHeight)
-    // context.fill()
 
   }
 
