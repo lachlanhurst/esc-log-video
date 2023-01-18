@@ -1,5 +1,5 @@
 
-import { DataType, allDataTypes, time } from '../dataTypes'
+import { DataType, allSingleValueDataTypes, time } from '../dataTypes'
 import { VideoOptions } from '../videoOptions'
 import { SeriesVideoDetail } from '../SeriesVideoDetail'
 import { LogFileDataSeries } from '../logFileData'

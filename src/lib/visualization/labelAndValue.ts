@@ -1,4 +1,4 @@
-import { allDataTypes } from '../dataTypes'
+import { allSingleValueDataTypes } from '../dataTypes'
 import { SeriesVideoDetail } from '../SeriesVideoDetail'
 import { VideoOptions } from '../videoOptions'
 import { CacheObject, DataTypeVisualization } from './dataTypesVisualization'
@@ -13,7 +13,7 @@ class LabelAndValue extends DataTypeVisualization {
   constructor() {
     super(
       'Label and value text',
-      allDataTypes,
+      allSingleValueDataTypes,
       []
     )
     this._width = 260

@@ -1,4 +1,4 @@
-import { allDataTypes } from '../dataTypes'
+import { allSingleValueDataTypes } from '../dataTypes'
 import { LogFileDataSeries } from '../logFileData'
 import { SeriesVideoDetail } from '../SeriesVideoDetail'
 import { VideoOptions } from '../videoOptions'
@@ -13,7 +13,7 @@ class BarChart extends DataTypeVisualization {
   constructor() {
     super(
       'Bar chart',
-      allDataTypes,
+      allSingleValueDataTypes,
       []
     )
     this._width = 260

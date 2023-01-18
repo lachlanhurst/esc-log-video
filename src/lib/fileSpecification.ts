@@ -13,6 +13,8 @@ export class FileSpecification {
   _name: string
   _delimiter: string
   _columns: FileSpecificationColumn[]
+  // columns made up of other columns
+  _compositeColumns: FileSpecificationCompositeColumn[]
   // columns that will be automatically added to UI when data has been loaded
   _defaultColumns: FileSpecificationColumn[]
 
@@ -26,10 +28,12 @@ export class FileSpecification {
     name: string,
     delimiter: string,
     columns: FileSpecificationColumn[],
+    compositeColumns: FileSpecificationCompositeColumn[],
     defaultColumns: FileSpecificationColumn[] = []
   ) {
     this._name = name
     this._columns = columns
+    this._compositeColumns = compositeColumns
     this._delimiter = delimiter
     this._defaultColumns = defaultColumns
   }
@@ -40,6 +44,10 @@ export class FileSpecification {
 
   get columns() {
     return this._columns
+  }
+
+  get compositeColumns() {
+    return this._compositeColumns
   }
 
   /**
@@ -101,6 +109,61 @@ export class FileSpecificationColumn {
 
 }
 
+
+export class FileSpecificationCompositeColumn extends FileSpecificationColumn{
+  /**
+   * Composite Columns are columns that are made up of more than one
+   * FileSpecificationColumn. For example; Orientation is made up of
+   * pitch/roll/yaw, Position is made up of latitude and longitude
+   * columns.
+   */
+  _columns: FileSpecificationColumn[]
+
+  constructor(columns: FileSpecificationColumn[], name: string, dataType: DataType) {
+    super("", name, dataType, dataType.units[0])
+    this._columns = columns
+  }
+
+  get columns() {
+    return this._columns
+  }
+
+}
+
+
+// specify a few columns that will later be used in definition
+// of some composite columns
+let roll = new FileSpecificationColumn(
+  'roll',
+  'Roll',
+  dataTypes.angle,
+  units.radian
+)
+let pitch = new FileSpecificationColumn(
+  'pitch',
+  'Pitch',
+  dataTypes.angle,
+  units.radian
+)
+let yaw = new FileSpecificationColumn(
+  'yaw',
+  'Yaw',
+  dataTypes.angle,
+  units.radian
+)
+let latitude = new FileSpecificationColumn(
+  'gnss_lat',
+  'Latitude',
+  dataTypes.position,
+  units.latitudeOrLongitude
+)
+let longitude = new FileSpecificationColumn(
+  'gnss_lon',
+  'Longitude',
+  dataTypes.position,
+  units.latitudeOrLongitude
+)
+
 const vescColumns = [
   new FileSpecificationColumn(
     'ms_today',
@@ -144,23 +207,30 @@ const vescColumns = [
     dataTypes.angle,
     units.degree
   ),
+  roll,
+  pitch,
+  yaw,
+  latitude,
+  longitude,
   new FileSpecificationColumn(
-    'roll',
-    'Roll',
-    dataTypes.angle,
-    units.radian
+    'gnss_alt',
+    'Altitude',
+    dataTypes.distance,
+    units.meter
   ),
-  new FileSpecificationColumn(
-    'pitch',
-    'Pitch',
-    dataTypes.angle,
-    units.radian
+]
+
+
+const vescCompositeColumns = [
+  new FileSpecificationCompositeColumn(
+    [yaw, pitch, roll],
+    "Orientation",
+    dataTypes.orientation
   ),
-  new FileSpecificationColumn(
-    'yaw',
-    'Yaw',
-    dataTypes.angle,
-    units.radian
+  new FileSpecificationCompositeColumn(
+    [longitude, latitude],
+    "Position",
+    dataTypes.position
   ),
 ]
 
@@ -169,6 +239,7 @@ export const vescFileSpecification = new FileSpecification(
   'VESC Log File',
   ';',
   vescColumns,
+  vescCompositeColumns,
   [
     vescColumns[0], vescColumns[2], vescColumns[5], vescColumns[4]
   ]

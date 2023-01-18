@@ -1,11 +1,13 @@
 import { DataType, time } from '../dataTypes'
 import { angleIndicator } from './angleIndicator'
+import { attitudeIndicator } from './attitudeIndicator'
 import { barChart } from './barChart'
 import { DataTypeVisualization, onlyTime } from './dataTypesVisualization'
 import { labelAndValue } from './labelAndValue'
 
 
 export const allVisualizations: DataTypeVisualization[] = [
+  attitudeIndicator,
   angleIndicator,
   labelAndValue,
   barChart,

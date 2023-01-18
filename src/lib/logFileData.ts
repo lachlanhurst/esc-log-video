@@ -65,4 +65,36 @@ export class LogFileData {
   get seriesColumns(): FileSpecificationColumn[] {
     return this._seriesList.map(s => s._column)
   }
+
+
+
+  buildCompositeSeries() {
+    /**
+     * A FileSpecification may specify a number of composite columns that
+     * are made up of other columns. Calling this function will generate
+     * LogFileDataSeries for these columns based on the data that has
+     * already been read.
+     */
+    for (let cc of this.fileSpecification.compositeColumns) {
+      // need to check that all columns needed by this composite column
+      // have been loaded and are available
+      let allSeriesAvailable = true
+      for (let c of cc.columns) {
+        if (!this.seriesColumns.includes(c)) {
+          allSeriesAvailable = false
+        }
+      }
+      if (!allSeriesAvailable) {
+        // then skip and go onto next composite column
+        continue
+      }
+      let compositeSeries = new LogFileDataSeries(cc)
+      let compositeSeriesInputList = cc.columns.map(ccCol => this.seriesForColumn(ccCol))
+      for (let i = 0 ; i < compositeSeriesInputList[0]!.data.length; i++) {
+        let seriesValues = compositeSeriesInputList.map(cci => cci!.data[i])
+        compositeSeries.addValue(seriesValues)
+      }
+      this._seriesList.push(compositeSeries)
+    }
+  }
 }

@@ -433,3 +433,25 @@ export const second = new Second()
 export const minute = new Minute()
 export const millisecond = new Millisecond()
 export const timeUnits = [minute, second, millisecond]
+
+// position
+export class LatitudeOrLongitude extends Unit {
+  /**
+   * technically this is just an angle, but practically
+   * we want to keep it separate from the other angle
+   * stuff. This will save conversion to/from radians.
+   */
+
+  constructor() {
+    super(
+      'Latitude or Longitude',
+      'latlong',
+      true
+    )
+  }
+
+  format(value: any): string {
+    return Number(value).toFixed(2)
+  }
+}
+export const latitudeOrLongitude = new LatitudeOrLongitude()

@@ -1,5 +1,5 @@
 import { LogFileData, LogFileDataSeries } from './logFileData'
-import { FileSpecificationColumn } from './fileSpecification'
+import { FileSpecificationColumn, FileSpecificationCompositeColumn } from './fileSpecification'
 
 import { Time } from './dataTypes'
 import { Unit } from './units'
@@ -120,8 +120,14 @@ export class LogFileDataHelper {
     for (let series of this._logFileData!.seriesList) {
       if (series.column == column) {
         let rawVal = series.data[this._currentIndex]
-        let valInUnits = units.convert(rawVal)
-        return valInUnits
+        if (column instanceof FileSpecificationCompositeColumn) {
+          // don't convert composite column values
+          // TODO may need to revisit this in future
+          return rawVal
+        } else {
+          let valInUnits = units.convert(rawVal)
+          return valInUnits
+        }
       }
     }
   }

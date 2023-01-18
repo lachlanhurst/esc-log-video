@@ -94,7 +94,30 @@ class Angle extends DataType {
 }
 export const angle = new Angle()
 
-export const allDataTypes = [
+// Orientation as expressed by three angles
+class Orientation extends DataType {
+  constructor() {
+    super(
+      'orientation',
+      units.angleUnits
+    )
+  }
+}
+export const orientation = new Orientation()
+
+
+// Position as expressed by two values (latitude and longitude)
+class Position extends DataType {
+  constructor() {
+    super(
+      'position',
+      [units.latitudeOrLongitude]
+    )
+  }
+}
+export const position = new Position()
+
+export const allSingleValueDataTypes = [
   temperature,
   distance,
   speed,
