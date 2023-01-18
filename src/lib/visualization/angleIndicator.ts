@@ -84,10 +84,9 @@ class AngleIndicator extends DataTypeVisualization {
     value: any
   ): void {
     let valueText = seriesVideoDetail.unit.format(value)
-    // context.beginPath()
-    // context.strokeStyle = "red"
-    // context.rect(this.absX(0, baseX), this.absY(0, baseY), this.width(seriesVideoDetail), this.height(seriesVideoDetail))
-    // context.stroke()
+
+    // this way we can be sure it's always in radians
+    value = seriesVideoDetail.unit.toBaseUnit(value)
 
     let h = this.height(seriesVideoDetail)
     let circleDiameter = h
