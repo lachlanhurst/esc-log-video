@@ -44,11 +44,7 @@ export class CanvasRenderer {
   }
 
   calculateSize(): Size {
-    let drawableSeries = this._seriesVideoDetails.filter((svd) => {
-      return svd.visualization != null
-    })
-
-    if (drawableSeries.length == 0) {
+    if (this._seriesVideoDetails.length == 0) {
       return {width: 400, height: 400}
     }
     let height = 0
@@ -58,11 +54,14 @@ export class CanvasRenderer {
     width += this._outerPadding * 2
 
     let maxVisWidth = 0
-    for (let svd of drawableSeries) {
-      let vis = svd.visualization!
-      height += vis.height(svd)
+    for (let i = 0; i < this._seriesVideoDetails.length; i++) {
+      let svd = this._seriesVideoDetails[i]
+      let cache = this._seriesVideoDetailCaches[i]
 
-      maxVisWidth = Math.max(maxVisWidth, vis.width(svd))
+      let vis = svd.visualization!
+      height += vis.height(svd, cache)
+
+      maxVisWidth = Math.max(maxVisWidth, vis.width(svd, cache))
 
       if (svd != this._seriesVideoDetails[0]) {
         height += this._verticalBetweenPadding
@@ -106,7 +105,7 @@ export class CanvasRenderer {
       let vis = svd.visualization!
       vis.draw(this._context, this._videoOptions, svd, cache, posX, posY, value)
 
-      posY += vis.height(svd)
+      posY += vis.height(svd, cache)
       posY += this._verticalBetweenPadding
     }
 

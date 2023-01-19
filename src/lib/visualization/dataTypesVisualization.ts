@@ -49,11 +49,11 @@ export class DataTypeVisualization {
     return this._options
   }
 
-  width(seriesVideoDetail: SeriesVideoDetail): number {
+  width(seriesVideoDetail: SeriesVideoDetail, cache: CacheObject): number {
     return this._width
   }
 
-  height(seriesVideoDetail: SeriesVideoDetail): number {
+  height(seriesVideoDetail: SeriesVideoDetail, cache: CacheObject): number {
     return this._height
   }
 

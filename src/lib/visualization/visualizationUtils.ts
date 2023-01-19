@@ -4,10 +4,12 @@ import { attitudeIndicator } from './attitudeIndicator'
 import { barChart } from './barChart'
 import { DataTypeVisualization, onlyTime } from './dataTypesVisualization'
 import { labelAndValue } from './labelAndValue'
+import { map } from './map'
 
 
 export const allVisualizations: DataTypeVisualization[] = [
   attitudeIndicator,
+  map,
   angleIndicator,
   labelAndValue,
   barChart,
