@@ -5,6 +5,7 @@ import { barChart } from './barChart'
 import { DataTypeVisualization, onlyTime } from './dataTypesVisualization'
 import { labelAndValue } from './labelAndValue'
 import { map } from './map'
+import { sparkline } from './sparkline'
 
 
 export const allVisualizations: DataTypeVisualization[] = [
@@ -13,6 +14,7 @@ export const allVisualizations: DataTypeVisualization[] = [
   angleIndicator,
   labelAndValue,
   barChart,
+  sparkline,
   onlyTime,
 ]
 
