@@ -7,9 +7,12 @@ import { CacheObject, DataTypeVisualization } from './dataTypesVisualization'
 
 class Dial extends DataTypeVisualization {
   _labelSize: number = 22
-  _dialHeight: number = 194
-  _dialStartAngle: number = (45 + 90) * (Math.PI / 180)
-  _dialEndAngle: number = (45 + 90 + 270) * (Math.PI / 180)
+  _valueSize: number = 64
+  _unitSize: number = 32
+  _padding: number = 6
+  _dialHeight: number = 220
+  _dialStartAngle: number = (180) * (Math.PI / 180)
+  _dialEndAngle: number = (180 + 270 - 45) * (Math.PI / 180)
   // number of steps around the dial
   _steps: number = 6
   _stepLabelSize = 14
@@ -24,7 +27,7 @@ class Dial extends DataTypeVisualization {
   }
 
   height(seriesVideoDetail: SeriesVideoDetail, cache: CacheObject): number {
-    return this._dialHeight
+    return this._dialHeight - 18
   }
 
   getSteps(steps: number, min: number, max: number) {
@@ -164,17 +167,6 @@ class Dial extends DataTypeVisualization {
         xInner,
         yInner,
       )
-      // drContext.beginPath()
-      // drContext.strokeStyle = "red"
-      // drContext.arc(
-      //   xInner,
-      //   yInner,
-      //   3,
-      //   0,
-      //   2 * Math.PI,
-      //   false
-      // )
-      // drContext.stroke()
     }
     drContext.stroke()
 
@@ -207,9 +199,12 @@ class Dial extends DataTypeVisualization {
     let valueText = seriesVideoDetail.unit.format(value)
 
     let y = 0
+    y += 10
+    y += this._labelSize
+    y += this._padding
+    y += this._dialHeight / 2
 
     if (seriesVideoDetail.name.length != 0) {
-      y += this._labelSize
       context.beginPath()
       context.fillStyle = videoOptions.foregroundColor
       context.textAlign = 'start'
@@ -222,6 +217,33 @@ class Dial extends DataTypeVisualization {
       )
       y += this._padding
     }
+
+    y += this._valueSize - 18 // -18 cause text size is hard
+
+    context.fillStyle = videoOptions.foregroundColor
+    context.textAlign = 'start'
+    context.letterSpacing = "-2px"
+    context.font = `${this._unitSize}px Helvetica`
+
+    let unitTextSize = context.measureText(seriesVideoDetail.unit.symbol)
+
+    context.fillText(
+      `${seriesVideoDetail.unit.symbol}`,
+      this.absX(this._width - this._dialHeight / 4 - unitTextSize.width - 20, baseX),
+      this.absY(y, baseY),
+      100
+    )
+
+    context.fillStyle = videoOptions.foregroundColor
+    context.textAlign = 'end'
+    context.letterSpacing = "-5px"
+    context.font = `bold ${this._valueSize}px Helvetica`
+    context.fillText(
+      `${valueText}`,
+      this.absX(this._width - this._dialHeight / 4 - unitTextSize.width - 22, baseX),
+      this.absY(y, baseY),
+      200
+    )
 
     let w = this.width(seriesVideoDetail, cache)
     let h = this.height(seriesVideoDetail, cache)
