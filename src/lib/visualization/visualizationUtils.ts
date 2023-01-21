@@ -3,6 +3,7 @@ import { angleIndicator } from './angleIndicator'
 import { attitudeIndicator } from './attitudeIndicator'
 import { barChart } from './barChart'
 import { DataTypeVisualization, onlyTime } from './dataTypesVisualization'
+import { dial } from './dial'
 import { labelAndValue } from './labelAndValue'
 import { map } from './map'
 import { sparkline } from './sparkline'
@@ -14,6 +15,7 @@ export const allVisualizations: DataTypeVisualization[] = [
   angleIndicator,
   labelAndValue,
   barChart,
+  dial,
   sparkline,
   onlyTime,
 ]
