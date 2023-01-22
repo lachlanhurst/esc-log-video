@@ -218,6 +218,18 @@ const vescColumns = [
     dataTypes.distance,
     units.meter
   ),
+  new FileSpecificationColumn(
+    'speed_meters_per_sec',
+    'Speed',
+    dataTypes.speed,
+    units.metersPerSecond
+  ),
+  new FileSpecificationColumn(
+    'gnss_gVel',
+    'Speed (GPS)',
+    dataTypes.speed,
+    units.metersPerSecond
+  ),
 ]
 
 
