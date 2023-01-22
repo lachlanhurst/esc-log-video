@@ -116,9 +116,7 @@ class Dial extends DataTypeVisualization {
 
     let dialRing = new OffscreenCanvas(this._dialHeight, this._dialHeight)
     
-    let drContext = dialRing.getContext('2d')!
-    // drContext.fillStyle = "red"
-    // drContext.fillRect(0, 0, this._dialHeight, this._dialHeight)
+    let drContext = dialRing.getContext('2d')! as OffscreenCanvasRenderingContext2D
 
     drContext.beginPath()
     drContext.strokeStyle = videoOptions.foregroundColor
@@ -148,6 +146,7 @@ class Dial extends DataTypeVisualization {
     drContext.beginPath()
     drContext.fillStyle = videoOptions.foregroundColor
     drContext.textAlign = 'center'
+    // @ts-ignore
     drContext.letterSpacing = "-1px"
     drContext.font = `${this._stepLabelSize}px Helvetica`
 
@@ -174,7 +173,7 @@ class Dial extends DataTypeVisualization {
     cache.dialRing = dialRing
 
     let arrow = new OffscreenCanvas(this._dialHeight, this._dialHeight)
-    let arrowContext = arrow.getContext('2d')!
+    let arrowContext = arrow.getContext('2d')! as OffscreenCanvasRenderingContext2D
     arrowContext.beginPath()
     arrowContext.strokeStyle = videoOptions.foregroundColor
     arrowContext.lineWidth = 2
@@ -208,6 +207,7 @@ class Dial extends DataTypeVisualization {
       context.beginPath()
       context.fillStyle = videoOptions.foregroundColor
       context.textAlign = 'start'
+      // @ts-ignore
       context.letterSpacing = "-2px"
       context.font = `${this._labelSize}px Helvetica`
       context.fillText(
@@ -222,6 +222,7 @@ class Dial extends DataTypeVisualization {
 
     context.fillStyle = videoOptions.foregroundColor
     context.textAlign = 'start'
+    // @ts-ignore
     context.letterSpacing = "-2px"
     context.font = `${this._unitSize}px Helvetica`
 
@@ -236,6 +237,7 @@ class Dial extends DataTypeVisualization {
 
     context.fillStyle = videoOptions.foregroundColor
     context.textAlign = 'end'
+    // @ts-ignore
     context.letterSpacing = "-5px"
     context.font = `bold ${this._valueSize}px Helvetica`
     context.fillText(
@@ -264,7 +266,7 @@ class Dial extends DataTypeVisualization {
 
 
     let arrowRotated = new OffscreenCanvas(this._dialHeight, this._dialHeight)
-    let arrowRotatedContext = arrowRotated.getContext('2d')!
+    let arrowRotatedContext = arrowRotated.getContext('2d')! as OffscreenCanvasRenderingContext2D
     arrowRotatedContext.translate(this._dialHeight / 2, this._dialHeight/2);
     arrowRotatedContext.rotate(valueAsAngle);
     arrowRotatedContext.drawImage(cache.arrow, -this._dialHeight / 2, -this._dialHeight / 2, this._dialHeight, this._dialHeight);

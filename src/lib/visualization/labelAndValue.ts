@@ -52,6 +52,7 @@ class LabelAndValue extends DataTypeVisualization {
       context.beginPath()
       context.fillStyle = videoOptions.foregroundColor
       context.textAlign = 'start'
+      // @ts-ignore
       context.letterSpacing = "-2px"
       context.font = `${this._labelSize}px Helvetica`
       context.fillText(
@@ -75,6 +76,7 @@ class LabelAndValue extends DataTypeVisualization {
 
     context.fillStyle = videoOptions.foregroundColor
     context.textAlign = 'end'
+    // @ts-ignore
     context.letterSpacing = "-5px"
     context.font = `bold ${this._valueSize}px Helvetica`
     context.fillText(
@@ -86,6 +88,7 @@ class LabelAndValue extends DataTypeVisualization {
 
     context.fillStyle = videoOptions.foregroundColor
     context.textAlign = 'start'
+    // @ts-ignore
     context.letterSpacing = "-2px"
     context.font = `${this._unitSize}px Helvetica`
     context.fillText(

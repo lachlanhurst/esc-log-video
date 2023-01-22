@@ -107,7 +107,7 @@ class Map extends DataTypeVisualization {
     // draw the basemap and stick it in the cache, this way we
     // don't need to redraw it every frame.
     let baseMapCanvas = new OffscreenCanvas(cache.width, cache.height)
-    let baseMapContext = baseMapCanvas.getContext('2d')!
+    let baseMapContext = baseMapCanvas.getContext('2d')! as OffscreenCanvasRenderingContext2D
     baseMapContext.strokeStyle = videoOptions.foregroundColor
     baseMapContext.lineWidth = 1
     baseMapContext.beginPath()

@@ -37,7 +37,7 @@ class AngleIndicator extends DataTypeVisualization {
   ): void {
 
     let tile = new OffscreenCanvas(10, 10)
-    let ctx = tile.getContext('2d')!
+    let ctx = tile.getContext('2d')! as OffscreenCanvasRenderingContext2D
     let gradient = ctx.createLinearGradient(0, 0, tile.width, tile.height);
     let colorStops = [
       [0, videoOptions.backgroundColor],
@@ -58,7 +58,7 @@ class AngleIndicator extends DataTypeVisualization {
 
     let rad = (this._labelSize + this._padding + this._valueSize - 18) / 2
     let semiCircle = new OffscreenCanvas(rad*2, rad*2)
-    let context = semiCircle.getContext('2d')!
+    let context = semiCircle.getContext('2d')! as OffscreenCanvasRenderingContext2D
     let tilePattern = context.createPattern(tile, 'repeat')!
     context.beginPath()
     context.fillStyle = tilePattern
@@ -102,6 +102,7 @@ class AngleIndicator extends DataTypeVisualization {
       context.beginPath()
       context.fillStyle = videoOptions.foregroundColor
       context.textAlign = 'start'
+      // @ts-ignore
       context.letterSpacing = "-2px"
       context.font = `${this._labelSize}px Helvetica`
       context.fillText(
@@ -116,7 +117,7 @@ class AngleIndicator extends DataTypeVisualization {
     let semiCircle = cache.semiCircle
 
     let semiCircleRotated = new OffscreenCanvas(circleDiameter, circleDiameter)
-    let semiCircleRotatedContext = semiCircleRotated.getContext('2d')!
+    let semiCircleRotatedContext = semiCircleRotated.getContext('2d')! as OffscreenCanvasRenderingContext2D
     semiCircleRotatedContext.translate(circleRadius, circleRadius);
     semiCircleRotatedContext.rotate(value);
     semiCircleRotatedContext.drawImage(semiCircle, -circleDiameter / 2, -circleDiameter / 2, circleDiameter, circleDiameter);

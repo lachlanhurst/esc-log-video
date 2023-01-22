@@ -70,6 +70,7 @@ class Sparkline extends DataTypeVisualization {
       context.beginPath()
       context.fillStyle = videoOptions.foregroundColor
       context.textAlign = 'start'
+      // @ts-ignore
       context.letterSpacing = "-2px"
       context.font = `${this._labelSize}px Helvetica`
       context.fillText(

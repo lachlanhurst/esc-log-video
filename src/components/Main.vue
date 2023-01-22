@@ -10,8 +10,6 @@ import SeriesDetail from './SeriesDetail.vue'
 import { SeriesVideoDetail } from '../lib/seriesVideoDetail'
 import { VideoOptions } from '../lib/videoOptions'
 
-import { temperature } from '../lib/dataTypes'
-
 import { LogFileReader } from '../lib/logFile'
 import { LogFileData } from '../lib/logFileData'
 import { LogFileDataHelper } from '../lib/logFileDataHelper'

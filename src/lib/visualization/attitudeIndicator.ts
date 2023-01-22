@@ -61,7 +61,7 @@ class AttitudeIndicator extends DataTypeVisualization {
     cache.minPitch = -25 * (Math.PI / 180)
 
     let tile = new OffscreenCanvas(10, 10)
-    let ctx = tile.getContext('2d')!
+    let ctx = tile.getContext('2d')! as OffscreenCanvasRenderingContext2D
     let gradient = ctx.createLinearGradient(0, 0, tile.width, tile.height);
     let colorStops = [
       [0, videoOptions.backgroundColor],
@@ -82,7 +82,7 @@ class AttitudeIndicator extends DataTypeVisualization {
 
     let squareSize = this.rad * 4
     let halfSquare = new OffscreenCanvas(squareSize, squareSize)
-    let context = halfSquare.getContext('2d')!
+    let context = halfSquare.getContext('2d')! as OffscreenCanvasRenderingContext2D
     let tilePattern = context.createPattern(tile, 'repeat')!
     context.beginPath()
     context.fillStyle = tilePattern
@@ -139,6 +139,7 @@ class AttitudeIndicator extends DataTypeVisualization {
       context.beginPath()
       context.fillStyle = videoOptions.foregroundColor
       context.textAlign = 'start'
+      // @ts-ignore
       context.letterSpacing = "-2px"
       context.font = `${this._labelSize}px Helvetica`
       context.fillText(
@@ -154,13 +155,10 @@ class AttitudeIndicator extends DataTypeVisualization {
     let radToPxRatio = halfUsablePitchPxHeight / pitchMax
     let pitchPx = radToPxRatio * pitch
 
-
-
-
     let semiCircle = cache.halfSquare
 
     let semiCircleRotated = new OffscreenCanvas(circleDiameter*2, circleDiameter*2)
-    let semiCircleRotatedContext = semiCircleRotated.getContext('2d')!
+    let semiCircleRotatedContext = semiCircleRotated.getContext('2d')! as OffscreenCanvasRenderingContext2D
     semiCircleRotatedContext.translate(circleDiameter, circleDiameter)
     semiCircleRotatedContext.rotate(roll)
     semiCircleRotatedContext.drawImage(semiCircle, -circleDiameter, -circleDiameter , circleDiameter * 2, circleDiameter * 2)
@@ -169,7 +167,7 @@ class AttitudeIndicator extends DataTypeVisualization {
 
 
     let semiCircleTranslated = new OffscreenCanvas(circleDiameter, circleDiameter)
-    let semiCircleTranslatedContext = semiCircleTranslated.getContext('2d')!
+    let semiCircleTranslatedContext = semiCircleTranslated.getContext('2d')! as OffscreenCanvasRenderingContext2D
 
     semiCircleTranslatedContext.beginPath()
     semiCircleTranslatedContext.arc(circleRadius, circleRadius, circleRadius, 0, 2 * Math.PI, false)
@@ -178,8 +176,6 @@ class AttitudeIndicator extends DataTypeVisualization {
     semiCircleTranslatedContext.translate(0, -pitchPx)
     semiCircleTranslatedContext.drawImage(semiCircleRotated, -circleRadius, -circleRadius, circleDiameter*2, circleDiameter*2)
     semiCircleTranslatedContext.translate(0, pitchPx)
-    
-
 
     context.drawImage(semiCircleTranslated, circleCenterX - circleRadius , circleCenterY - circleRadius )
 
@@ -206,8 +202,6 @@ class AttitudeIndicator extends DataTypeVisualization {
       context.lineTo(circleCenterX + crossLineLength / 2, circleCenterY - pxHeight)
     }
     context.stroke()
-
-
   }
 
 }

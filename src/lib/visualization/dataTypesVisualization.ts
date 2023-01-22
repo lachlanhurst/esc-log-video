@@ -136,10 +136,14 @@ class OnlyTime extends DataTypeVisualization {
     context.beginPath()
     // context.lineWidth = 6
     context.strokeStyle = "blue"
-    context.rect(this.absX(0,baseX), this.absY(0, baseY), this.width(seriesVideoDetail), this.height(seriesVideoDetail))
+    context.rect(
+      this.absX(0,baseX),
+      this.absY(0, baseY),
+      this.width(seriesVideoDetail, cache),
+      this.height(seriesVideoDetail, cache)
+    )
     context.stroke()
   }
 
 }
 export const onlyTime = new OnlyTime()
-

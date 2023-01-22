@@ -45,7 +45,7 @@ class BarChart extends DataTypeVisualization {
 
     let tile = new OffscreenCanvas(10, 10) //document.createElement('canvas')
     // tile.width = tile.height = 10
-    let ctx = tile.getContext('2d')!
+    let ctx = tile.getContext('2d')! as OffscreenCanvasRenderingContext2D
     let gradient = ctx.createLinearGradient(0, 0, tile.width, tile.height);
     let colorStops = [
       [0, videoOptions.backgroundColor],
@@ -89,6 +89,7 @@ class BarChart extends DataTypeVisualization {
       context.beginPath()
       context.fillStyle = videoOptions.foregroundColor
       context.textAlign = 'start'
+      // @ts-ignore
       context.letterSpacing = "-2px"
       context.font = `${this._labelSize}px Helvetica`
       context.fillText(
