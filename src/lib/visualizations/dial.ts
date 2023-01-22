@@ -17,6 +17,8 @@ class Dial extends DataTypeVisualization {
   _steps: number = 8
   _stepsBetweenSteps: number = 5
   _stepLabelSize = 14
+  // show the max from this long ago
+  _historicMaxTime: number = 1
 
   constructor() {
     super(
@@ -192,14 +194,22 @@ class Dial extends DataTypeVisualization {
     let arrowContext = arrow.getContext('2d')! as OffscreenCanvasRenderingContext2D
     arrowContext.beginPath()
     arrowContext.strokeStyle = videoOptions.foregroundColor
+    arrowContext.fillStyle = videoOptions.backgroundColor
     arrowContext.lineWidth = 2
     arrowContext.moveTo(this._dialHeight / 2 , this._dialHeight / 2 + 5)
     arrowContext.lineTo(this._dialHeight / 2 , this._dialHeight / 2 - 5)
     arrowContext.lineTo(this._dialHeight / 2 + (dialRadius - stepLineLength) , this._dialHeight / 2)
     arrowContext.closePath()
+    arrowContext.fill()
     arrowContext.stroke()
 
     cache.arrow = arrow
+
+    // initialize the array we're going to put the previous data into
+    // so that we can draw a time series based chart in the draw call
+    cache.previousData = []
+    // how many frames worth of previous data do we keep
+    cache.previousDataLength = videoOptions.fps * this._historicMaxTime
   }
 
   draw(
@@ -211,6 +221,18 @@ class Dial extends DataTypeVisualization {
     baseY: number,
     value: any
   ): void {
+
+    // push a new value onto the start of the array
+    cache.previousData.unshift(value)
+    if (cache.previousData.length > cache.previousDataLength) {
+      // if the array is longer than its limit, remove the last value
+      cache.previousData.pop()
+    }
+    if (cache.previousData.length <= 1) {
+      // not enough info to draw
+      return
+    }
+
     let valueText = seriesVideoDetail.unit.format(value)
 
     let y = 0
@@ -279,6 +301,20 @@ class Dial extends DataTypeVisualization {
     let dAngle = this._dialEndAngle - this._dialStartAngle
     let angleValueRatio = dAngle / dValue
     let valueAsAngle = angleValueRatio * (value - cache.step.min) + this._dialStartAngle
+
+    // draw the historic max line
+    let historicMaxValue = Math.max(...cache.previousData)
+    let historicMaxValueAsAngle = angleValueRatio * (historicMaxValue - cache.step.min) + this._dialStartAngle
+    let dialCenterX = this.absX(w - this._dialHeight / 2, baseX)
+    let dialCenterY = this.absX(this._dialHeight / 2, baseY)
+    context.beginPath()
+    context.strokeStyle = videoOptions.foregroundColor
+    context.lineWidth = 1
+    context.moveTo(dialCenterX, dialCenterY)
+    let lineOuterX = (this._dialHeight / 2 - 10) * Math.cos(historicMaxValueAsAngle) + dialCenterX
+    let lineOuterY = (this._dialHeight / 2 - 10) * Math.sin(historicMaxValueAsAngle) + dialCenterY
+    context.lineTo(lineOuterX, lineOuterY)
+    context.stroke()
 
 
     let arrowRotated = new OffscreenCanvas(this._dialHeight, this._dialHeight)
