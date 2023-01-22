@@ -163,6 +163,9 @@ export class MetersPerSecond extends Unit {
     )
   }
 
+  format(value: any): string {
+    return Number(value).toFixed(2)
+  }
 }
 
 export class KilometersPerHour extends Unit {
@@ -178,6 +181,10 @@ export class KilometersPerHour extends Unit {
   convert(value) {
     return value * 3.6
   }
+
+  format(value: any): string {
+    return Number(value).toFixed(1)
+  }
 }
 
 export class MilesPerHour extends Unit {
@@ -192,6 +199,10 @@ export class MilesPerHour extends Unit {
 
   convert(value) {
     return value * 2.23694
+  }
+
+  format(value: any): string {
+    return Number(value).toFixed(1)
   }
 }
 
