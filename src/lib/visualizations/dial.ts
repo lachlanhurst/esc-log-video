@@ -14,7 +14,8 @@ class Dial extends DataTypeVisualization {
   _dialStartAngle: number = (180) * (Math.PI / 180)
   _dialEndAngle: number = (180 + 270 - 45) * (Math.PI / 180)
   // number of steps around the dial
-  _steps: number = 6
+  _steps: number = 8
+  _stepsBetweenSteps: number = 5
   _stepLabelSize = 14
 
   constructor() {
@@ -98,7 +99,7 @@ class Dial extends DataTypeVisualization {
     cache.step = this.getSteps(this._steps, min, max)
 
     let deltaAngle = this._dialEndAngle - this._dialStartAngle
-    let stepLineLength = 6
+    let stepLineLength = 8
 
     let stepAngles: number[] = []
     let angle = this._dialStartAngle
@@ -150,6 +151,7 @@ class Dial extends DataTypeVisualization {
     drContext.letterSpacing = "-1px"
     drContext.font = `${this._stepLabelSize}px Helvetica`
 
+    // draw the big steps, and labels
     for (let i = 0; i <= cache.step.count; i++) {
       let stepAngle = stepAngles[i]
       let xInner = (dialRadius - stepLineLength - 10) * Math.cos(stepAngle) + 2 + dialRadius
@@ -169,6 +171,20 @@ class Dial extends DataTypeVisualization {
     }
     drContext.stroke()
 
+    // draw the little steps
+    drContext.beginPath()
+    let littleStepAngle = this._dialStartAngle
+    while (littleStepAngle <= this._dialEndAngle) {
+      let xOuter = dialRadius * Math.cos(littleStepAngle) + 2 + dialRadius
+      let yOuter = (dialRadius * Math.sin(littleStepAngle) + 2 + dialRadius)
+      let xInner = (dialRadius - stepLineLength / 2) * Math.cos(littleStepAngle) + 2 + dialRadius
+      let yInner = (dialRadius - stepLineLength / 2) * Math.sin(littleStepAngle) + 2 + dialRadius
+      drContext.moveTo(xOuter, yOuter)
+      drContext.lineTo(xInner, yInner)
+
+      littleStepAngle += (deltaAngle / (cache.step.count * this._stepsBetweenSteps))
+    }
+    drContext.stroke()
 
     cache.dialRing = dialRing
 
