@@ -1,5 +1,5 @@
 import { LogFileData } from './logFileData'
-import { vescFileSpecification } from './fileSpecification'
+import { vescFileSpecification } from './fileSpecifications/vesc'
 
 export const getDummyData = <LogFileData>() => {
   let lfd = new LogFileData(vescFileSpecification)

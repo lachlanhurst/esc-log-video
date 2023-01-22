@@ -1,7 +1,7 @@
 import { parse } from 'csv-parse/browser/esm'
 
 
-import { allSpecifications } from './fileSpecification'
+import { allFileSpecifications } from './fileSpecificationUtils'
 import { LogFileData } from './logFileData'
 
 
@@ -59,7 +59,7 @@ export class LogFileReader {
   getFileSpecification(firstLine) {
     let matchingFileSpec = null
     let matchingFields = 0
-    for (const fileSpec of allSpecifications) {
+    for (const fileSpec of allFileSpecifications) {
       let headerNames = firstLine.split(fileSpec.delimiter)
       let fileSpecMatches = 0
       for (const column of fileSpec.columns) {
