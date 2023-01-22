@@ -1,12 +1,12 @@
-import { DataType, time } from '../dataTypes'
-import { angleIndicator } from './angleIndicator'
-import { attitudeIndicator } from './attitudeIndicator'
-import { barChart } from './barChart'
-import { DataTypeVisualization, onlyTime } from './dataTypesVisualization'
-import { dial } from './dial'
-import { labelAndValue } from './labelAndValue'
-import { map } from './map'
-import { sparkline } from './sparkline'
+import { DataType, time } from './dataTypes'
+import { angleIndicator } from './visualizations/angleIndicator'
+import { attitudeIndicator } from './visualizations/attitudeIndicator'
+import { barChart } from './visualizations/barChart'
+import { DataTypeVisualization, onlyTime } from './visualization'
+import { dial } from './visualizations/dial'
+import { labelAndValue } from './visualizations/labelAndValue'
+import { map } from './visualizations/map'
+import { sparkline } from './visualizations/sparkline'
 
 
 export const allVisualizations: DataTypeVisualization[] = [

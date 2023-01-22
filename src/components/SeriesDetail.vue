@@ -6,8 +6,8 @@ import { CaretDownFilled, CaretUpFilled, DeleteOutlined } from '@ant-design/icon
 import { FileSpecificationColumn } from '../lib/fileSpecification'
 import { Unit } from '../lib/units'
 import { SeriesVideoDetail } from '../lib/seriesVideoDetail'
-import { DataTypeVisualization } from '../lib/visualization/dataTypesVisualization'
-import { allVisualizations, getVisualization } from '../lib/visualization/visualizationUtils'
+import { DataTypeVisualization } from '../lib/visualization'
+import { allVisualizations, getVisualization } from '../lib/visualizationUtils'
 
 
 const props = defineProps({

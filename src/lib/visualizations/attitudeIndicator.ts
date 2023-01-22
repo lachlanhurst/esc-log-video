@@ -2,7 +2,7 @@ import { orientation } from '../dataTypes'
 import { LogFileDataSeries } from '../logFileData'
 import { SeriesVideoDetail } from '../SeriesVideoDetail'
 import { VideoOptions } from '../videoOptions'
-import { CacheObject, DataTypeVisualization } from './dataTypesVisualization'
+import { CacheObject, DataTypeVisualization } from '../visualization'
 
 
 class AttitudeIndicator extends DataTypeVisualization {

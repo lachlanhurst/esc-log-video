@@ -1,4 +1,4 @@
-import { DataTypeVisualization } from './dataTypesVisualization';
+import { DataTypeVisualization } from './visualization';
 import { FileSpecificationColumn } from './fileSpecification'
 import { Unit } from './units'
 

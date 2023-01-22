@@ -1,10 +1,10 @@
 
-import { DataType, allSingleValueDataTypes, time } from '../dataTypes'
-import { VideoOptions } from '../videoOptions'
-import { SeriesVideoDetail } from '../SeriesVideoDetail'
-import { LogFileDataSeries } from '../logFileData'
-import { labelAndValue } from './labelAndValue'
-import { barChart } from './barChart'
+import { DataType, allSingleValueDataTypes, time } from './dataTypes'
+import { VideoOptions } from './videoOptions'
+import { SeriesVideoDetail } from './seriesVideoDetail'
+import { LogFileDataSeries } from './logFileData'
+import { labelAndValue } from './visualizations/labelAndValue'
+import { barChart } from './visualizations/barChart'
 
 
 export class DataTypeVisualizationOption {

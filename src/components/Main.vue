@@ -13,7 +13,7 @@ import { VideoOptions } from '../lib/videoOptions'
 import { LogFileReader } from '../lib/logFile'
 import { LogFileData } from '../lib/logFileData'
 import { LogFileDataHelper } from '../lib/logFileDataHelper'
-import { getVisualization } from '../lib/visualization/visualizationUtils'
+import { getVisualization } from '../lib/visualizationUtils'
 import { getDummyData } from '../lib/dummyData'
 import { FileSpecificationColumn } from '../lib/fileSpecification'
 

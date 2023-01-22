@@ -1,7 +1,7 @@
 import { LogFileDataHelper } from './logFileDataHelper'
 import { SeriesVideoDetail } from './SeriesVideoDetail'
 import { VideoOptions } from './videoOptions'
-import { CacheObject } from './visualization/dataTypesVisualization'
+import { CacheObject } from './visualization'
 
 interface Size {
   width: number
