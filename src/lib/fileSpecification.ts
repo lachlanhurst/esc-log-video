@@ -71,6 +71,7 @@ export class FileSpecificationColumn {
   _name: string
   _dataType: DataType
   _unit: Unit
+  _hidden: boolean
 
   /**
    * Make a new file spec column
@@ -78,12 +79,14 @@ export class FileSpecificationColumn {
    * @param {*} name the 'nice' name for the data contained in this column
    * @param {*} datatype the datatype that applies to this column. Can be null
    * @param {*} unit the unit that this column of data is provided in
+   * @param {*} hidden hide this column from the user (default is false)
    */
-  constructor(label: string, name: string, dataType: DataType, unit: Unit) {
+  constructor(label: string, name: string, dataType: DataType, unit: Unit, hidden: boolean = false) {
     this._label = label
     this._name = name
     this._dataType = dataType
     this._unit = unit
+    this._hidden = hidden
 
     if (!this._dataType.units.includes(this._unit)) {
       throw new Error(`Unit ${this._unit.name} is not applicable for datatype ${this._name}`);
@@ -106,6 +109,9 @@ export class FileSpecificationColumn {
     return this._unit
   }
 
+  get hidden() {
+    return this._hidden
+  }
 }
 
 

@@ -28,13 +28,15 @@ let latitude = new FileSpecificationColumn(
   'gnss_lat',
   'Latitude',
   dataTypes.position,
-  units.latitudeOrLongitude
+  units.latitudeOrLongitude,
+  true
 )
 let longitude = new FileSpecificationColumn(
   'gnss_lon',
   'Longitude',
   dataTypes.position,
-  units.latitudeOrLongitude
+  units.latitudeOrLongitude,
+  true
 )
 
 const vescColumns = [

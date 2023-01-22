@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineComponent, ref, reactive, watch, onMounted } from 'vue'
+import { ref, reactive, watch, onMounted, computed } from 'vue'
 import { QuestionOutlined, InboxOutlined, VideoCameraAddOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { Empty } from 'ant-design-vue'
 import { message } from 'ant-design-vue'
@@ -145,6 +145,10 @@ const handleRenderProgress = (e) => {
   console.log(e)
 }
 
+const availableColumns = computed(() => {
+  return logFileData.value?.seriesColumns.filter(col => !col.hidden)
+})
+
 // watch(videoOptions, async (newVideoOptions, oldVideoOptions) => {
 //   console.log(newVideoOptions)
 // })
@@ -232,15 +236,15 @@ watch(
                   <a-card-meta title="Data series" description="Specify which series in VESC log data will be rendered to video">
                   </a-card-meta>
                 </a-card>
-                
+
                 <SeriesDetail
                   v-for="seriesVideoDetail in seriesVideoDetails"
                   :series-video-detail="seriesVideoDetail"
                   :seriesVideoDetailList="seriesVideoDetails"
-                  :available-columns="logFileData?.seriesColumns"
+                  :available-columns="availableColumns"
                   style="margin-bottom: 2px; margin-top: 2px;"
                 />
-                
+
                 <Empty v-if="!logFileData" :image="Empty.PRESENTED_IMAGE_SIMPLE">
                   <template #description>
                     <span>
