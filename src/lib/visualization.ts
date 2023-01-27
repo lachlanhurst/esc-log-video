@@ -95,6 +95,32 @@ export class DataTypeVisualization {
     throw new Error('Method "draw()" must be implemented.')
   }
 
+  drawMask(
+    context: CanvasRenderingContext2D,
+    videoOptions: VideoOptions,
+    seriesVideoDetail: SeriesVideoDetail,
+    cache: CacheObject,
+    baseX: number,
+    baseY: number,
+    value: any
+  ) {
+    // default mask implementation is to unmask the entire
+    // extent of the visualization. Visualizations may
+    // overwrite this to mask less of the area.
+    let w = this.width(seriesVideoDetail, cache)
+    let h = this.height(seriesVideoDetail, cache)
+
+    // white = not mask, black = mask
+    context.fillStyle = "white"
+    context.fillRect(
+      this.absX(0, baseX),
+      this.absY(0, baseY),
+      w,
+      h
+    )
+
+  }
+
   /**
    * Check if this visualization supports the given data type
    * @param dataType 

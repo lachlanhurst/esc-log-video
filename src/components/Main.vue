@@ -6,6 +6,7 @@ import { message } from 'ant-design-vue'
 import { Compact } from '@ckpack/vue-color'
 
 import RenderCanvas from './RenderCanvas.vue'
+import MaskCanvas from './MaskCanvas.vue'
 import SeriesDetail from './SeriesDetail.vue'
 import { SeriesVideoDetail } from '../lib/seriesVideoDetail'
 import { VideoOptions } from '../lib/videoOptions'
@@ -31,6 +32,7 @@ onMounted(() => {
 
 
 const renderCanvas = ref()
+const maskCanvas = ref()
 
 const startRender = () => {
   renderCanvas.value?.startRecording()
@@ -38,6 +40,10 @@ const startRender = () => {
 
 const cancelRender = () => {
   renderCanvas.value?.stopRecording()
+}
+
+const saveMask = () => {
+  maskCanvas.value?.saveMask()
 }
 
 const rightPanelTabList = [
@@ -329,14 +335,19 @@ watch(
           <template v-if="rightPanelTabKey === 'mask'">
             <a-row class="flex render-background" align="middle" justify="center">
               <div>
-                mask
+                <MaskCanvas
+                  ref="maskCanvas"
+                  :videoOptions="videoOptions"
+                  :seriesVideoDetails="seriesVideoDetails"
+                  :logFileDataHelper="logFileDataHelper"
+                />
               </div>
             </a-row>
 
             <a-row type="flex" align="middle" :gutter="[8, 8]" style="padding: 8px 0px">
               <a-col class="gutter-row">
-                <a-button>
-                  Download mask image
+                <a-button @click="saveMask">
+                  Save mask image
                 </a-button>
               </a-col>
 
