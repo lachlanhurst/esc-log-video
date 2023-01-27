@@ -3,11 +3,16 @@ import { SeriesVideoDetail } from './SeriesVideoDetail'
 import { VideoOptions } from './videoOptions'
 import { CacheObject } from './visualization'
 
+
 interface Size {
   width: number
   height: number
 }
 
+
+/**
+ * Renders the log file data to the html canvas
+ */
 export class CanvasRenderer {
   _logFileDataHelper: LogFileDataHelper | null
   _seriesVideoDetails: SeriesVideoDetail[]
@@ -30,6 +35,10 @@ export class CanvasRenderer {
     this._videoOptions = videoOptions
   }
 
+  /**
+   * Call this before the draw function to perform and initializations
+   * required by the individual visualizations
+   */
   initialize():void {
     this._seriesVideoDetailCaches = []
 
@@ -43,6 +52,10 @@ export class CanvasRenderer {
     }
   }
 
+  /**
+   * Calculates the  size of the canvas based on the data series and visualizations
+   * @returns 
+   */
   calculateSize(): Size {
     if (this._seriesVideoDetails.length == 0) {
       return {width: 400, height: 400}
@@ -81,7 +94,6 @@ export class CanvasRenderer {
   }
 
   draw() {
-    console.log("canvas renderer draw")
     let posX = 0
     let posY = 0
 
@@ -114,6 +126,5 @@ export class CanvasRenderer {
     }
 
   }
-
 
 }
