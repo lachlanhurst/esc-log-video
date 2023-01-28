@@ -154,5 +154,55 @@ class AngleIndicator extends DataTypeVisualization {
 
   }
 
+  drawMask(
+    context: CanvasRenderingContext2D,
+    videoOptions: VideoOptions,
+    seriesVideoDetail: SeriesVideoDetail,
+    cache: CacheObject,
+    baseX: number,
+    baseY: number,
+    value: any): void
+  {
+    let maskPadding = 4
+
+    let h = this.height(seriesVideoDetail)
+    let circleDiameter = h
+    let circleRadius = h / 2
+
+    let circleCenterX = this.absX(baseX, this._width - circleRadius)
+    let circleCenterY = this.absY(baseY, circleRadius)
+
+    context.fillStyle = "white"
+
+    let y = this.absY(baseY, 0)
+    if (seriesVideoDetail.name.length != 0) {
+      context.textAlign = 'start'
+      // @ts-ignore
+      context.letterSpacing = "-2px"
+      context.font = `${this._labelSize}px Helvetica`
+      let labelSize = context.measureText(seriesVideoDetail.name)
+      let labelX = this.absX(baseX, 0)
+      let labelWidth = circleCenterX - labelX
+      let labelHeight = labelSize.actualBoundingBoxAscent + labelSize.actualBoundingBoxDescent
+      let labelY = y + this._labelSize - labelSize.actualBoundingBoxAscent
+
+      labelX -= maskPadding
+      labelY -= maskPadding
+      labelHeight += (2 * maskPadding)
+      labelWidth += maskPadding
+
+      context.fillRect(labelX, labelY, labelWidth, labelHeight)
+    }
+
+    context.beginPath()
+    context.arc(
+      circleCenterX,
+      circleCenterY,
+      circleRadius + maskPadding,
+      0,
+      Math.PI * 2
+    )
+    context.fill()
+  }
 }
 export const angleIndicator = new AngleIndicator()
