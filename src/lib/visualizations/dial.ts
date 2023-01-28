@@ -95,6 +95,8 @@ class Dial extends DataTypeVisualization {
     let max = Math.max(...logFileDataSeries.data)
     min = seriesVideoDetails.unit.convert(min)
     max = seriesVideoDetails.unit.convert(max)
+    cache.min = min
+    cache.max = max
 
     // now get some nicer min/max values to step around
     // the dial
@@ -334,5 +336,92 @@ class Dial extends DataTypeVisualization {
 
   }
 
+  drawMask(
+    context: CanvasRenderingContext2D,
+    videoOptions: VideoOptions,
+    seriesVideoDetail: SeriesVideoDetail,
+    cache: CacheObject,
+    baseX: number,
+    baseY: number,
+    value: any): void
+  {
+    let maskPadding = 4
+
+    let dialRadius = this._dialHeight / 2 - 2
+    let w = this.width(seriesVideoDetail, cache)
+    let h = this.height(seriesVideoDetail, cache)
+    let dialCenterX = this.absX(w - this._dialHeight / 2, baseX)
+    let dialCenterY = this.absX(this._dialHeight / 2, baseY)
+
+    let extraAngle = 5 * (Math.PI/180)
+
+    context.beginPath()
+    context.fillStyle = "white"
+    context.arc(
+      dialCenterX,
+      dialCenterY,
+      dialRadius + maskPadding,
+      this._dialStartAngle - extraAngle,
+      this._dialEndAngle + extraAngle,
+    )
+    context.fill()
+
+
+    let y = 0
+    y += 10
+    y += this._padding
+    y += this._dialHeight / 2
+
+    if (seriesVideoDetail.name.length != 0) {
+      context.fillStyle = "white"
+      context.textAlign = 'start'
+      // @ts-ignore
+      context.letterSpacing = "-2px"
+      context.font = `${this._labelSize}px Helvetica`
+      let lb = this.labelBounds(seriesVideoDetail.name, this._labelSize, context)
+
+
+      context.fillRect(
+        this.absX(baseX, lb[0]) - maskPadding,
+        this.absY(baseY, lb[1] + y) - maskPadding,
+        lb[2] + this._width/2,
+        lb[3] + 2 * maskPadding
+      )
+
+      y += this._padding
+    }
+
+    y += this._labelSize
+    y += - 18 // -18 cause text size is hard
+
+    context.fillStyle = videoOptions.foregroundColor
+    context.textAlign = 'start'
+    // @ts-ignore
+    context.letterSpacing = "-2px"
+    context.font = `${this._unitSize}px Helvetica`
+    let unitTextSize = context.measureText(seriesVideoDetail.unit.symbol)
+
+    context.textAlign = 'end'
+    // @ts-ignore
+    context.letterSpacing = "-5px"
+    context.font = `bold ${this._valueSize}px Helvetica`
+
+    let valueTextStart = this._width - this._dialHeight / 4 - unitTextSize.width - 22
+    
+    let valueTextMin = seriesVideoDetail.unit.format(cache.min)
+    let valueTextMax = seriesVideoDetail.unit.format(cache.max)
+    let lbMin = this.labelBounds(`${valueTextMin}`, this._valueSize, context)
+    let lbMax = this.labelBounds(`${valueTextMax}`, this._valueSize, context)
+    let lbFinalX = Math.max(lbMin[0], lbMax[0])
+    let lbFinalWidth = Math.max(lbMin[2], lbMax[2])
+
+    context.fillStyle = "white"
+    context.fillRect(
+      this.absX(baseX, valueTextStart - lbFinalX) - maskPadding,
+      this.absY(baseY, lbMax[1] + y) - maskPadding,
+      lbFinalWidth + maskPadding * 2 + unitTextSize.width,
+      lbMax[3] + maskPadding * 2
+    )
+  }
 }
 export const dial = new Dial()

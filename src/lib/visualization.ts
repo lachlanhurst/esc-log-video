@@ -135,6 +135,24 @@ export class DataTypeVisualization {
     return false
   }
 
+  /**
+   * Utility function to get the size of a text label that has been rendered to the html
+   * canvas
+   * @param text 
+   * @param labelFontSize 
+   * @param context 
+   * @returns 
+   */
+  labelBounds(text: string, labelFontSize: number, context: CanvasRenderingContext2D): number[] {
+    let labelSize = context.measureText(text)
+    let labelX = labelSize.width - labelSize.actualBoundingBoxLeft
+    let labelWidth = labelSize.width
+    labelX = labelSize.actualBoundingBoxLeft
+    let labelHeight = labelSize.actualBoundingBoxAscent + labelSize.actualBoundingBoxDescent
+    let labelY = labelFontSize - labelSize.actualBoundingBoxAscent
+
+    return [labelX, labelY, labelWidth, labelHeight]
+  }
 }
 
 
