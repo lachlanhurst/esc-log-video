@@ -56,12 +56,15 @@ const rightPanelTabList = [
     tab: 'Mask',
   },
 ]
+
 const rightPanelTabKey = ref('video')
 const onRightPanelTabChange = (value: string) => {
-  console.log("tab change: " + value);
   rightPanelTabKey.value = value
 
-};
+  if (value == "mask") {
+    renderCanvas.value!.stopPlaying()
+  }
+}
 
 const fileList = ref([])
 const reading = ref(false)

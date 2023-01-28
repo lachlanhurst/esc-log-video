@@ -52,6 +52,7 @@ onMounted(() => {
     context.value!,
     props.videoOptions!
   )
+  canvasRenderer.initialize()
 
   // draw()
   canvasAction.value = CanvasActions.playing
@@ -60,12 +61,15 @@ onMounted(() => {
 
 
 const draw = () => {
+  if (renderCanvas.value) {
+    let size = canvasRenderer!.calculateSize()
+    renderCanvas.value!.width = size.width
+    renderCanvas.value!.height = size.height
 
-  let size = canvasRenderer!.calculateSize()
-  renderCanvas.value!.width = size.width
-  renderCanvas.value!.height = size.height
-
-  canvasRenderer?.draw()
+    canvasRenderer?.draw()
+  } else {
+    console.log("null canvas draw")
+  }
 
 }
 
@@ -163,6 +167,10 @@ const stopRecording = () => {
   mp4Capture.value = undefined;
 }
 
+const stopPlaying = () => {
+  canvasAction.value = CanvasActions.stopped
+}
+
 watch(
   () => props.videoOptions,
   (newValue, oldValue) => {
@@ -198,7 +206,8 @@ watch(
 
 defineExpose({
   startRecording,
-  stopRecording
+  stopRecording,
+  stopPlaying,
 })
 
 </script>

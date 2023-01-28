@@ -27,7 +27,7 @@ onMounted(() => {
     context.value!,
     props.videoOptions!
   )
-
+  maskRenderer.initialize()
   draw()
 })
 
