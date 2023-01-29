@@ -132,7 +132,7 @@ const startRecording = () => {
 
   let vo = props.videoOptions!
   const mp4Options = {
-    name: 'demo-mp4',
+    name: 'elv_video',
     format: CanvasCapture.MP4,
     quality: 1,
     fps: vo.fps,
