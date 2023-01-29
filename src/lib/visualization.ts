@@ -147,7 +147,7 @@ export class DataTypeVisualization {
     let labelSize = context.measureText(text)
     let labelX = labelSize.width - labelSize.actualBoundingBoxLeft
     let labelWidth = labelSize.width
-    labelX = labelSize.actualBoundingBoxLeft
+    labelX = -labelSize.actualBoundingBoxLeft
     let labelHeight = labelSize.actualBoundingBoxAscent + labelSize.actualBoundingBoxDescent
     let labelY = labelFontSize - labelSize.actualBoundingBoxAscent
 

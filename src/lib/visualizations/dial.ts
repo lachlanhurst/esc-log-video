@@ -412,12 +412,12 @@ class Dial extends DataTypeVisualization {
     let valueTextMax = seriesVideoDetail.unit.format(cache.max)
     let lbMin = this.labelBounds(`${valueTextMin}`, this._valueSize, context)
     let lbMax = this.labelBounds(`${valueTextMax}`, this._valueSize, context)
-    let lbFinalX = Math.max(lbMin[0], lbMax[0])
+    let lbFinalX = Math.min(lbMin[0], lbMax[0])
     let lbFinalWidth = Math.max(lbMin[2], lbMax[2])
 
     context.fillStyle = "white"
     context.fillRect(
-      this.absX(baseX, valueTextStart - lbFinalX) - maskPadding,
+      this.absX(baseX, valueTextStart + lbFinalX) - maskPadding,
       this.absY(baseY, lbMax[1] + y) - maskPadding,
       lbFinalWidth + maskPadding * 2 + unitTextSize.width,
       lbMax[3] + maskPadding * 2
