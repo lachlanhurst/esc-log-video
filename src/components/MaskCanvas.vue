@@ -43,8 +43,15 @@ const draw = () => {
 
 
 const saveMask = () => {
-  console.log("SAVE MASK click")
+  let dt = canvas.value!.toDataURL('image/png');
+  let link = document.createElement("a")
+  link.download = "elv_mask.png";
+  link.href = dt
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
+
 
 watch(
   () => props.videoOptions,
