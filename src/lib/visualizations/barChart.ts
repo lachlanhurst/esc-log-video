@@ -82,6 +82,8 @@ class BarChart extends DataTypeVisualization {
     // context.rect(this.absX(0, baseX), this.absY(0, baseY), this.width(seriesVideoDetail), this.height(seriesVideoDetail))
     // context.stroke()
 
+    // distance the bar chart is inset from the left and right
+    let inset = 4
     let y = 0
 
     if (seriesVideoDetail.name.length != 0) {
@@ -103,12 +105,12 @@ class BarChart extends DataTypeVisualization {
     let dRange = cache.max - cache.min
     let dValue = value - cache.min
     let fraction = dValue / dRange
-    let valueWidth = fraction * this._width
+    let valueWidth = fraction * (this._width - 2 * inset)
 
     let tilePattern = context.createPattern(cache.hatch, 'repeat')!
     context.fillStyle = tilePattern
     context.fillRect(
-      this.absX(0, baseX),
+      this.absX(inset, baseX),
       this.absY(y, baseY),
       valueWidth,
       this._barHeight)
@@ -117,9 +119,9 @@ class BarChart extends DataTypeVisualization {
     context.strokeStyle = videoOptions.foregroundColor
     context.lineWidth = 2
     context.rect(
-      this.absX(0, baseX),
+      this.absX(inset, baseX),
       this.absY(y, baseY),
-      this._width,
+      this._width - inset * 2,
       this._barHeight)
     context.stroke()
 
@@ -127,13 +129,56 @@ class BarChart extends DataTypeVisualization {
     context.strokeStyle = videoOptions.foregroundColor
     context.fillStyle = videoOptions.foregroundColor
     context.rect(
-      this.absX(valueWidth - 1, baseX),
+      this.absX(valueWidth - 1 + inset, baseX),
       this.absY(y, baseY),
       3,
       this._barHeight)
     context.fill()
 
   }
+
+  drawMask(
+    context: CanvasRenderingContext2D,
+    videoOptions: VideoOptions,
+    seriesVideoDetail: SeriesVideoDetail,
+    cache: CacheObject,
+    baseX: number,
+    baseY: number,
+    value: any): void
+  {
+    let inset = 4
+    let maskPadding = 4
+
+    context.fillStyle = "white"
+
+    let y = 0
+    if (seriesVideoDetail.name.length != 0) {
+      context.textAlign = 'start'
+      // @ts-ignore
+      context.letterSpacing = "-2px"
+      context.font = `${this._labelSize}px Helvetica`
+      let labelSize = this.labelBounds(seriesVideoDetail.name, this._labelSize, context)
+      let labelX = this.absX(baseX, labelSize[0] - maskPadding)
+      let labelWidth = labelSize[2] + 2 * maskPadding
+      let labelHeight = labelSize[3] + 2 * maskPadding
+      let labelY = this.absY(baseY, labelSize[1] - maskPadding)
+
+      context.fillRect(labelX, labelY, labelWidth, labelHeight)
+
+      y += this._labelSize
+      y += this._padding
+    }
+
+    context.fillStyle = "white"
+    context.fillRect(
+      this.absX(inset - maskPadding, baseX),
+      this.absY(y - maskPadding, baseY),
+      this._width - 2 * inset + 2 * maskPadding,
+      this._barHeight + 2 * maskPadding,
+    )
+
+  }
+
 
 }
 export const barChart = new BarChart()
