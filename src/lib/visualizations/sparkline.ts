@@ -154,5 +154,47 @@ class Sparkline extends DataTypeVisualization {
     context.stroke()
   }
 
+
+  drawMask(
+    context: CanvasRenderingContext2D,
+    videoOptions: VideoOptions,
+    seriesVideoDetail: SeriesVideoDetail,
+    cache: CacheObject,
+    baseX: number,
+    baseY: number,
+    value: any): void
+  {
+    let inset = 5
+    let maskPadding = 4
+
+    context.fillStyle = "white"
+
+    let y = 0
+    if (seriesVideoDetail.name.length != 0) {
+      context.textAlign = 'start'
+      // @ts-ignore
+      context.letterSpacing = "-2px"
+      context.font = `${this._labelSize}px Helvetica`
+      let labelSize = this.labelBounds(seriesVideoDetail.name, this._labelSize, context)
+      let labelX = this.absX(baseX, labelSize[0] - maskPadding)
+      let labelWidth = labelSize[2] + 2 * maskPadding
+      let labelHeight = labelSize[3] + 2 * maskPadding
+      let labelY = this.absY(baseY, labelSize[1] - maskPadding)
+
+      context.fillRect(labelX, labelY, labelWidth, labelHeight)
+
+      y += this._labelSize
+      y += this._padding
+    }
+
+    context.fillStyle = "white"
+    context.fillRect(
+      this.absX(inset - maskPadding, baseX),
+      this.absY(y - maskPadding, baseY),
+      this._width - 2 * inset + 2 * maskPadding,
+      this._chartHeight + 2 * maskPadding,
+    )
+  }
+
 }
 export const sparkline = new Sparkline()
