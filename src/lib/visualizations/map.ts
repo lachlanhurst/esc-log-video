@@ -127,6 +127,32 @@ class Map extends DataTypeVisualization {
     baseMapContext.stroke()
 
     cache.baseMap = baseMapCanvas
+
+    let maskPadding = 4
+
+    let baseMapMaskCanvas = new OffscreenCanvas(cache.width + maskPadding*2, cache.height + maskPadding*2)
+    let baseMapMaskContext = baseMapMaskCanvas.getContext('2d')! as OffscreenCanvasRenderingContext2D
+    baseMapMaskContext.strokeStyle = "white"
+    baseMapMaskContext.lineWidth = 10
+    baseMapMaskContext.lineCap = 'round'
+    baseMapMaskContext.lineJoin = 'round'
+    baseMapMaskContext.beginPath()
+
+    isFirst = true
+    // loop through all points in the filtered list
+    for (let pt of points) {
+      let ptX = (pt[0] - cache.longMin) * cache.scaleFactor
+      let ptY = (pt[1] - cache.latMin) * cache.scaleFactor
+      if (isFirst) {
+        isFirst = false
+        baseMapMaskContext.moveTo(ptX + cache.widthOffset + maskPadding, cache.height - ptY + maskPadding)
+      } else {
+        baseMapMaskContext.lineTo(ptX + cache.widthOffset + maskPadding, cache.height - ptY + maskPadding)
+      }
+    }
+    baseMapMaskContext.stroke()
+    cache.baseMapMask = baseMapMaskCanvas
+
   }
 
   draw(
@@ -180,6 +206,31 @@ class Map extends DataTypeVisualization {
     // context.strokeStyle = videoOptions.foregroundColor
     // context.rect(this.absX(0, baseX), this.absY(0, baseY), w, h)
     // context.stroke()
+  }
+
+  drawMask(
+    context: CanvasRenderingContext2D,
+    videoOptions: VideoOptions,
+    seriesVideoDetail: SeriesVideoDetail,
+    cache: CacheObject,
+    baseX: number,
+    baseY: number,
+    value: any): void
+  {
+    let maskPadding = 4
+    let w = this.width(seriesVideoDetail, cache)
+    let h = this.height(seriesVideoDetail, cache)
+
+    // draw the basemap onto the context
+    context.drawImage(
+      cache.baseMapMask,
+      this.absX(0 - maskPadding, baseX),
+      this.absY(0 - maskPadding, baseY),
+      w + maskPadding * 2,
+      h + maskPadding * 2
+    )
+
+
   }
 
 }
