@@ -27,7 +27,7 @@ export class MaskRenderer extends CanvasRenderer {
     this._context.beginPath()
     this._context.fillStyle = "black"
     this._context.fillRect(0, 0, size.width, size.height)
-
+    this._context.filter = "blur(1px)"
 
     posX += this._outerPadding
     posY += this._outerPadding
