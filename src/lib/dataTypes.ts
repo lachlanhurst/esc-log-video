@@ -105,6 +105,56 @@ class Orientation extends DataType {
 }
 export const orientation = new Orientation()
 
+// Position as expressed by two values (latitude and longitude)
+class Percentage extends DataType {
+  constructor() {
+    super(
+      'percentage',
+      units.percentUnits
+    )
+  }
+}
+export const percentage = new Percentage()
+
+class ElectricCharge extends DataType {
+  constructor() {
+    super(
+      'electric charge',
+      units.electricChargeUnits
+    )
+  }
+}
+export const electricCharge = new ElectricCharge()
+
+class Power extends DataType {
+  constructor() {
+    super(
+      'power',
+      units.powerUnits
+    )
+  }
+}
+export const power = new Power()
+
+class Energy extends DataType {
+  constructor() {
+    super(
+      'energy',
+      units.energyUnits
+    )
+  }
+}
+export const energy = new Energy()
+
+class Acceleration extends DataType {
+  constructor() {
+    super(
+      'acceleration',
+      units.accelerationUnits
+    )
+  }
+}
+export const acceleration = new Acceleration()
 
 // Position as expressed by two values (latitude and longitude)
 class Position extends DataType {
@@ -125,4 +175,9 @@ export const allSingleValueDataTypes = [
   voltage,
   current,
   angle,
+  percentage,
+  power,
+  energy,
+  electricCharge,
+  acceleration,
 ]

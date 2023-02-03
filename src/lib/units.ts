@@ -58,6 +58,50 @@ export class Unit {
   }
 }
 
+
+// --------------------
+// Percents and fractions
+// Not really units, but this is how to best support them in ESC Log Video
+// --------------------
+class Percent extends Unit {
+
+  constructor() {
+    super(
+      'Percent',
+      '%',
+      false
+    )
+  }
+
+  format(value: any): string {
+    return Number(value).toFixed(0)
+  }
+
+  convert(value) {
+    return value * 100
+  }
+}
+
+class PercentFraction extends Unit {
+
+  constructor() {
+    super(
+      'Fraction',
+      '',
+      true
+    )
+  }
+
+  format(value: any): string {
+    return Number(value).toFixed(2)
+  }
+}
+
+export const percent = new Percent()
+export const percentFraction = new PercentFraction()
+export const percentUnits = [percent, percentFraction]
+
+
 // --------------------
 // Temperatures
 // --------------------
@@ -302,10 +346,55 @@ export class Watt extends Unit {
     )
   }
 
+  format(value: any): string {
+    return Number(value).toFixed(0)
+  }
+}
+
+export class Kilowatt extends Unit {
+
+  constructor() {
+    super(
+      'Kilowatt',
+      'kW',
+      false
+    )
+  }
+
+  convert(value: any) {
+    // watts to kilowatts
+    return value / 1000
+  }
+
+  format(value: any): string {
+    return Number(value).toFixed(0)
+  }
+}
+
+export class Horsepower extends Unit {
+
+  constructor() {
+    super(
+      'Horsepower',
+      'hp',
+      false
+    )
+  }
+
+  convert(value: any) {
+    // watts to hp
+    return value * 0.00134102
+  }
+
+  format(value: any): string {
+    return Number(value).toFixed(1)
+  }
 }
 
 export const watt = new Watt()
-export const powerUnits = [watt]
+export const kilowatt = new Kilowatt()
+export const horsepower = new Horsepower()
+export const powerUnits = [watt, kilowatt, horsepower]
 
 // --------------------
 // Energy

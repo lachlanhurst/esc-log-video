@@ -77,6 +77,66 @@ const vescColumns = [
     units.ampere
   ),
   new FileSpecificationColumn(
+    'speed_meters_per_sec',
+    'Speed',
+    dataTypes.speed,
+    units.metersPerSecond
+  ),
+  new FileSpecificationColumn(
+    'duty_cycle',
+    'Duty cycle',
+    dataTypes.percentage,
+    units.percentFraction
+  ),
+  new FileSpecificationColumn(
+    'battery_level',
+    'Battery level',
+    dataTypes.percentage,
+    units.percentFraction
+  ),
+  new FileSpecificationColumn(
+    'amp_hours_used',
+    'Amp hours used',
+    dataTypes.electricCharge,
+    units.ampereHour
+  ),
+  new FileSpecificationColumn(
+    'amp_hours_charged',
+    'Amp hours charged',
+    dataTypes.electricCharge,
+    units.ampereHour
+  ),
+  new FileSpecificationColumn(
+    'watt_hours_used',
+    'Watt hours used',
+    dataTypes.energy,
+    units.wattHour
+  ),
+  new FileSpecificationColumn(
+    'watt_hours_charged',
+    'Watt hours charged',
+    dataTypes.energy,
+    units.wattHour
+  ),
+  new FileSpecificationColumn(
+    'accX',
+    'Acceleration X',
+    dataTypes.acceleration,
+    units.metersPerSecondSquared
+  ),
+  new FileSpecificationColumn(
+    'accY',
+    'Acceleration Y',
+    dataTypes.acceleration,
+    units.metersPerSecondSquared
+  ),
+  new FileSpecificationColumn(
+    'accZ',
+    'Acceleration Z',
+    dataTypes.acceleration,
+    units.metersPerSecondSquared
+  ),
+  new FileSpecificationColumn(
     'encoder_position',
     'Encoder position',
     dataTypes.angle,
@@ -92,12 +152,6 @@ const vescColumns = [
     'Altitude',
     dataTypes.distance,
     units.meter
-  ),
-  new FileSpecificationColumn(
-    'speed_meters_per_sec',
-    'Speed',
-    dataTypes.speed,
-    units.metersPerSecond
   ),
   new FileSpecificationColumn(
     'gnss_gVel',
