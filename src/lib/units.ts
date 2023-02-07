@@ -168,6 +168,10 @@ export class Kilometer extends Unit {
     )
   }
 
+  toBaseUnit(value) {
+    return value / 1000
+  }
+
   convert(value) {
     return value / 1000.0
   }
@@ -220,6 +224,10 @@ export class KilometersPerHour extends Unit {
       'km/h',
       false
     )
+  }
+
+  toBaseUnit(value) {
+    return value / 3.6
   }
 
   convert(value) {
@@ -330,7 +338,7 @@ export class AmpereHour extends Unit {
 
 }
 
-export const ampereHour = new Ampere()
+export const ampereHour = new AmpereHour()
 export const electricChargeUnits = [ampereHour]
 
 // --------------------
@@ -411,7 +419,7 @@ export class WattHour extends Unit {
 
 }
 
-export const wattHour = new Watt()
+export const wattHour = new WattHour()
 export const energyUnits = [wattHour]
 
 // --------------------
