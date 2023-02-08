@@ -1,22 +1,22 @@
 import { LogFileData } from './logFileData'
-import { vescFileSpecification } from './fileSpecifications/vesc'
+import { vescSingleFileSpecification } from './fileSpecifications/vescSingle'
 
 export const getDummyData = <LogFileData>() => {
-  let lfd = new LogFileData(vescFileSpecification)
+  let lfd = new LogFileData(vescSingleFileSpecification)
 
-  let timeCol = vescFileSpecification.columnForLabel('ms_today')!
-  let motorAmpsCol = vescFileSpecification.columnForLabel('current_motor')!
-  let batteryAmpsCol = vescFileSpecification.columnForLabel('current_in')!
-  let inputVoltsCol = vescFileSpecification.columnForLabel('input_voltage')!
-  let motorTempCol = vescFileSpecification.columnForLabel('temp_motor')!
-  let mosTempCol = vescFileSpecification.columnForLabel('temp_mos_max')!
+  let timeCol = vescSingleFileSpecification.columnForLabel('ms_today')!
+  let motorAmpsCol = vescSingleFileSpecification.columnForLabel('current_motor')!
+  let batteryAmpsCol = vescSingleFileSpecification.columnForLabel('current_in')!
+  let inputVoltsCol = vescSingleFileSpecification.columnForLabel('input_voltage')!
+  let motorTempCol = vescSingleFileSpecification.columnForLabel('temp_motor')!
+  let mosTempCol = vescSingleFileSpecification.columnForLabel('temp_mos_max')!
 
-  let pitchCol = vescFileSpecification.columnForLabel('pitch')!
-  let rollCol = vescFileSpecification.columnForLabel('roll')!
-  let yawCol = vescFileSpecification.columnForLabel('yaw')!
+  let pitchCol = vescSingleFileSpecification.columnForLabel('pitch')!
+  let rollCol = vescSingleFileSpecification.columnForLabel('roll')!
+  let yawCol = vescSingleFileSpecification.columnForLabel('yaw')!
 
-  let latCol = vescFileSpecification.columnForLabel('gnss_lat')!
-  let longCol = vescFileSpecification.columnForLabel('gnss_lon')!
+  let latCol = vescSingleFileSpecification.columnForLabel('gnss_lat')!
+  let longCol = vescSingleFileSpecification.columnForLabel('gnss_lon')!
 
 
   let timeSeriesIndex = lfd.addSeries(timeCol)

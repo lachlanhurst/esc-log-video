@@ -63,6 +63,22 @@ export class FileSpecification {
   columnForLabel(label: string): FileSpecificationColumn | undefined {
     return this._columns.find(col => col.label == label)
   }
+
+  /**
+   * Clones this file specification using shallow copies for the various
+   * column arrays
+   * @returns 
+   */
+  clone(): FileSpecification {
+    let clone = new FileSpecification(
+      this._name,
+      this._delimiter,
+      [...this._columns],
+      [...this._compositeColumns],
+      [...this._defaultColumns],
+    )
+    return clone
+  }
 }
 
 

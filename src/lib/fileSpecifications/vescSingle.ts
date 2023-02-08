@@ -1,6 +1,14 @@
+/**
+ * VESC Log file definition for single VESC setups
+ * 
+ * We separate the single VESC and multi-VESC definitions so that the
+ * battery and motor current fields can have better naming and so that
+ * we can omit the single VESC data from multi-VESC files (no one will
+ * want to display that data and it will only confuse users)
+ */
 
-import * as dataTypes from './../dataTypes'
-import * as units from './../units'
+import * as dataTypes from '../dataTypes'
+import * as units from '../units'
 import { FileSpecification, FileSpecificationColumn, FileSpecificationCompositeColumn } from '../fileSpecification'
 
 
@@ -39,7 +47,7 @@ let longitude = new FileSpecificationColumn(
   true
 )
 
-const vescColumns = [
+export const vescColumns = [
   new FileSpecificationColumn(
     'ms_today',
     'Time today',
@@ -63,30 +71,6 @@ const vescColumns = [
     'Motor temperature',
     dataTypes.temperature,
     units.degreeCelsius
-  ),
-  new FileSpecificationColumn(
-    'current_motor',
-    'Motor current (single VESC)',
-    dataTypes.current,
-    units.ampere
-  ),
-  new FileSpecificationColumn(
-    'current_motor_setup',
-    'Motor current (all VESCs)',
-    dataTypes.current,
-    units.ampere
-  ),
-  new FileSpecificationColumn(
-    'current_in',
-    'Battery current (single VESC)',
-    dataTypes.current,
-    units.ampere
-  ),
-  new FileSpecificationColumn(
-    'current_in_setup',
-    'Battery current (all VESCs)',
-    dataTypes.current,
-    units.ampere
   ),
   new FileSpecificationColumn(
     'speed_meters_per_sec',
@@ -173,8 +157,22 @@ const vescColumns = [
   ),
 ]
 
+const vescSingleColumns = [
+  new FileSpecificationColumn(
+    'current_in',
+    'Battery current',
+    dataTypes.current,
+    units.ampere
+  ),
+  new FileSpecificationColumn(
+    'current_motor',
+    'Motor current',
+    dataTypes.current,
+    units.ampere
+  ),
+]
 
-const vescCompositeColumns = [
+export const vescCompositeColumns = [
   new FileSpecificationCompositeColumn(
     [yaw, pitch, roll],
     "Orientation",
@@ -187,13 +185,12 @@ const vescCompositeColumns = [
   ),
 ]
 
-
-export const vescFileSpecification = new FileSpecification(
-  'VESC Log File',
+export const vescSingleFileSpecification = new FileSpecification(
+  'VESC Log File (single VESC)',
   ';',
-  vescColumns,
+  [...vescColumns, ...vescSingleColumns],
   vescCompositeColumns,
   [
-    vescColumns[0], vescColumns[2], vescColumns[4]
+    vescColumns[0], vescColumns[2]
   ]
 )
