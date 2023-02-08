@@ -66,13 +66,25 @@ const vescColumns = [
   ),
   new FileSpecificationColumn(
     'current_motor',
-    'Motor current',
+    'Motor current (single VESC)',
+    dataTypes.current,
+    units.ampere
+  ),
+  new FileSpecificationColumn(
+    'current_motor_setup',
+    'Motor current (all VESCs)',
     dataTypes.current,
     units.ampere
   ),
   new FileSpecificationColumn(
     'current_in',
-    'Battery current',
+    'Battery current (single VESC)',
+    dataTypes.current,
+    units.ampere
+  ),
+  new FileSpecificationColumn(
+    'current_in_setup',
+    'Battery current (all VESCs)',
     dataTypes.current,
     units.ampere
   ),
@@ -182,6 +194,6 @@ export const vescFileSpecification = new FileSpecification(
   vescColumns,
   vescCompositeColumns,
   [
-    vescColumns[0], vescColumns[2], vescColumns[5], vescColumns[4]
+    vescColumns[0], vescColumns[2], vescColumns[4]
   ]
 )
