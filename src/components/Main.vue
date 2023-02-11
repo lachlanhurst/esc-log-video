@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted, computed } from 'vue'
+import { ref, reactive, watch, onMounted, computed, toRaw } from 'vue'
 import { QuestionOutlined, InboxOutlined, VideoCameraAddOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { Empty } from 'ant-design-vue'
 import { message } from 'ant-design-vue'
@@ -94,9 +94,31 @@ const handleChange = info => {
       logFileDataHelper.value.logFileData = data
       logFileDataHelper.value.reset()
 
-      logFileData.value.fileSpecification.defaultColumns.forEach((col) => {
-        addColumnAsDefaultToSvd(col)
-      })
+      // need to remove the series video details that are currently displayed, but
+      // no longer have data because a new dataset was reloaded.
+      let indexesToRemove: number[] = []
+      for (let i = 0; i < seriesVideoDetails.value.length; i++) {
+        let svd = seriesVideoDetails.value[i]
+        if (data.seriesColumns.includes(toRaw(svd.column))) {
+          // then it's ok, this column can stay
+        } else {
+          // then we need to remove it
+          indexesToRemove.push(i)
+        }
+      }
+      // remove in reverse order otherwise the indexes will be wrong
+      indexesToRemove.reverse()
+      for (const index of indexesToRemove) {
+        seriesVideoDetails.value.splice(index, 1)
+      }
+
+      // add in the default columns, but only if there are no existing columns
+      // displayed
+      if (seriesVideoDetails.value.length == 0) {
+        logFileData.value.fileSpecification.defaultColumns.forEach((col) => {
+          addColumnAsDefaultToSvd(col)
+        })
+      }
 
       renderCanvas.value!.startPlaying()
     })
