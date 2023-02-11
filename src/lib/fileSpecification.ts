@@ -11,6 +11,8 @@ export class FileSpecification {
   _name: string
   _delimiter: string
   _columns: FileSpecificationColumn[]
+  // columns calculated from data in other columns
+  _derivedColumns: FileSpecificationDerivedColumn[]
   // columns made up of other columns
   _compositeColumns: FileSpecificationCompositeColumn[]
   // columns that will be automatically added to UI when data has been loaded
@@ -26,11 +28,13 @@ export class FileSpecification {
     name: string,
     delimiter: string,
     columns: FileSpecificationColumn[],
+    derivedColumns: FileSpecificationDerivedColumn[],
     compositeColumns: FileSpecificationCompositeColumn[],
     defaultColumns: FileSpecificationColumn[] = []
   ) {
     this._name = name
     this._columns = columns
+    this._derivedColumns = derivedColumns
     this._compositeColumns = compositeColumns
     this._delimiter = delimiter
     this._defaultColumns = defaultColumns
@@ -42,6 +46,10 @@ export class FileSpecification {
 
   get columns() {
     return this._columns
+  }
+
+  get derivedColumns() {
+    return this._derivedColumns
   }
 
   get compositeColumns() {
@@ -74,6 +82,7 @@ export class FileSpecification {
       this._name,
       this._delimiter,
       [...this._columns],
+      [...this._derivedColumns],
       [...this._compositeColumns],
       [...this._defaultColumns],
     )
@@ -127,6 +136,35 @@ export class FileSpecificationColumn {
 
   get hidden() {
     return this._hidden
+  }
+}
+
+
+export class FileSpecificationDerivedColumn extends FileSpecificationColumn {
+  /**
+   * Derived Columns are columns that are calculated from the data contained
+   * in one or more of the FileSpecificationColumns read from the file. For
+   * example; Power is calculated from current and voltage.
+   */
+  _columns: FileSpecificationColumn[]
+
+  constructor(columns: FileSpecificationColumn[], name: string, dataType: DataType, unit: Unit) {
+    super("", name, dataType, unit)
+    this._columns = columns
+  }
+
+  get columns() {
+    return this._columns
+  }
+
+  /**
+   * Takes a list of input values sourced from other data series and calculates
+   * the derived value. The order of the inputs is the same as the order of
+   * the `columns` list passed into the constructor.
+   * @param input list of input values
+   */
+  calculateValue(input: any[]): any {
+    throw new Error('Method "calculateValue()" must be implemented for Derived Columns')
   }
 }
 

@@ -53,6 +53,7 @@ export const getDummyData = <LogFileData>() => {
     lfd.addSeriesValue(longSeriesIndex, 20 + Math.sin(i * 0.07) / 3)
   }
 
+  lfd.buildDerivedSeries()
   lfd.buildCompositeSeries()
 
   return lfd

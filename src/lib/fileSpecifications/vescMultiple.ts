@@ -11,6 +11,18 @@ import * as dataTypes from '../dataTypes'
 import * as units from '../units'
 import { FileSpecification, FileSpecificationColumn, FileSpecificationCompositeColumn } from '../fileSpecification'
 import { vescColumns, vescCompositeColumns } from './vescSingle'
+import { PowerDerivedColumn } from './derivedColumns'
+
+let current = new FileSpecificationColumn(
+  'current_in_setup',
+  'Battery current',
+  dataTypes.current,
+  units.ampere
+)
+
+let voltage = vescColumns.find((col) => {
+  return col.label == "input_voltage"
+})!
 
 // we really only include the single VESC values in here so the
 // file format auto detect works
@@ -21,12 +33,7 @@ const multiVescColumns = [
     dataTypes.current,
     units.ampere
   ),
-  new FileSpecificationColumn(
-    'current_in_setup',
-    'Battery current',
-    dataTypes.current,
-    units.ampere
-  ),
+  current,
   new FileSpecificationColumn(
     'current_in',
     'Battery current (single VESC only)',
@@ -41,10 +48,15 @@ const multiVescColumns = [
   ),
 ]
 
+const derivedColumns = [
+  new PowerDerivedColumn(current, voltage)
+]
+
 export const vescMultipleFileSpecification = new FileSpecification(
   'VESC Log File (multiple VESC)',
   ';',
   [...vescColumns, ...multiVescColumns],
+  derivedColumns,
   vescCompositeColumns,
   [
     vescColumns[0], vescColumns[2]

@@ -84,6 +84,7 @@ const handleChange = info => {
 
     reading.value = true
     logReader.read().then((data) => {
+      data.buildDerivedSeries()
       data.buildCompositeSeries()
       reading.value = false
       readingProgress.value = 0

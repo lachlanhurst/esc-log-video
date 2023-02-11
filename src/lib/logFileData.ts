@@ -67,6 +67,35 @@ export class LogFileData {
   }
 
 
+  buildDerivedSeries() {
+    /**
+     * A FileSpecification may specify a number of derived columns with
+     * values that are calculated from other columns.
+     */
+    for (let dc of this.fileSpecification.derivedColumns) {
+      // need to check that all columns needed by this derived column
+      // have been loaded and are available
+      let allSeriesAvailable = true
+      for (let c of dc.columns) {
+        if (!this.seriesColumns.includes(c)) {
+          allSeriesAvailable = false
+        }
+      }
+      if (!allSeriesAvailable) {
+        // then skip and go onto next derived column
+        continue
+      }
+      let derivedSeries = new LogFileDataSeries(dc)
+      let derivedSeriesInputList = dc.columns.map(ccCol => this.seriesForColumn(ccCol))
+      for (let i = 0; i < derivedSeriesInputList[0]!.data.length; i++) {
+        let seriesValues = derivedSeriesInputList.map(cci => cci!.data[i])
+        let derivedValue = dc.calculateValue(seriesValues)
+        derivedSeries.addValue(derivedValue)
+      }
+      this._seriesList.push(derivedSeries)
+    }
+  }
+
 
   buildCompositeSeries() {
     /**

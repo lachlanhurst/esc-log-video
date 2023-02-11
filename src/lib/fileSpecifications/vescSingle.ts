@@ -9,11 +9,29 @@
 
 import * as dataTypes from '../dataTypes'
 import * as units from '../units'
-import { FileSpecification, FileSpecificationColumn, FileSpecificationCompositeColumn } from '../fileSpecification'
+import {
+  FileSpecification,
+  FileSpecificationColumn,
+  FileSpecificationCompositeColumn,
+  FileSpecificationDerivedColumn
+} from '../fileSpecification'
+import { PowerDerivedColumn } from './derivedColumns'
 
 
 // specify a few columns that will later be used in definition
 // of some composite columns
+let voltage = new FileSpecificationColumn(
+  'input_voltage',
+  'Input Voltage',
+  dataTypes.voltage,
+  units.volt
+)
+let current = new FileSpecificationColumn(
+  'current_in',
+  'Battery current',
+  dataTypes.current,
+  units.ampere
+)
 let roll = new FileSpecificationColumn(
   'roll',
   'Roll',
@@ -54,12 +72,7 @@ export const vescColumns = [
     dataTypes.time,
     units.millisecond
   ),
-  new FileSpecificationColumn(
-    'input_voltage',
-    'Input Voltage',
-    dataTypes.voltage,
-    units.volt
-  ),
+  voltage,
   new FileSpecificationColumn(
     'temp_mos_max',
     'MOSFET temperature',
@@ -157,13 +170,9 @@ export const vescColumns = [
   ),
 ]
 
+
 const vescSingleColumns = [
-  new FileSpecificationColumn(
-    'current_in',
-    'Battery current',
-    dataTypes.current,
-    units.ampere
-  ),
+  current,
   new FileSpecificationColumn(
     'current_motor',
     'Motor current',
@@ -171,6 +180,12 @@ const vescSingleColumns = [
     units.ampere
   ),
 ]
+
+
+const derivedColumns = [
+  new PowerDerivedColumn(current, voltage)
+]
+
 
 export const vescCompositeColumns = [
   new FileSpecificationCompositeColumn(
@@ -185,10 +200,12 @@ export const vescCompositeColumns = [
   ),
 ]
 
+
 export const vescSingleFileSpecification = new FileSpecification(
   'VESC Log File (single VESC)',
   ';',
   [...vescColumns, ...vescSingleColumns],
+  derivedColumns,
   vescCompositeColumns,
   [
     vescColumns[0], vescColumns[2]

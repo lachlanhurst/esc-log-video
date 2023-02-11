@@ -2,6 +2,7 @@
 import * as dataTypes from './../dataTypes'
 import * as units from './../units'
 import { FileSpecification, FileSpecificationColumn, FileSpecificationCompositeColumn } from '../fileSpecification'
+import { PowerDerivedColumn } from './derivedColumns'
 
 
 // specify a few columns that will later be used in definition
@@ -19,6 +20,19 @@ let pitch = new FileSpecificationColumn(
   units.degree
 )
 // note: no yaw included in float control output
+let current = new FileSpecificationColumn(
+  'I-Battery',
+  'Battery current',
+  dataTypes.current,
+  units.ampere
+)
+let voltage = new FileSpecificationColumn(
+  'Voltage',
+  'Voltage',
+  dataTypes.voltage,
+  units.volt
+)
+
 
 const floatControlColumns = [
   new FileSpecificationColumn(
@@ -27,12 +41,7 @@ const floatControlColumns = [
     dataTypes.time,
     units.second
   ),
-  new FileSpecificationColumn(
-    'Voltage',
-    'Voltage',
-    dataTypes.voltage,
-    units.volt
-  ),
+  voltage,
   new FileSpecificationColumn(
     'T-Mosfet',
     'MOSFET temperature',
@@ -57,12 +66,7 @@ const floatControlColumns = [
     dataTypes.current,
     units.ampere
   ),
-  new FileSpecificationColumn(
-    'I-Battery',
-    'Battery current',
-    dataTypes.current,
-    units.ampere
-  ),
+  current,
   new FileSpecificationColumn(
     'I-FldWeak',
     'Field weakening current',
@@ -151,6 +155,12 @@ const floatControlColumns = [
   ),
 ]
 
+
+const derivedColumns = [
+  new PowerDerivedColumn(current, voltage)
+]
+
+
 // note: no yaw included in float control output, so lets just
 // throw in pitch as yaw. The only vis currently implemented that
 // uses this composite column doesn't use yaw anyway.
@@ -167,6 +177,7 @@ export const floatControlFileSpecification = new FileSpecification(
   'Float Control Log File',
   ',',
   floatControlColumns,
+  derivedColumns,
   floatControlCompositeColumns,
   [
     floatControlColumns[0], floatControlColumns[8], floatControlColumns[4]
