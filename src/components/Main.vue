@@ -77,6 +77,8 @@ const logFileDataHelper = ref<LogFileDataHelper>(new LogFileDataHelper())
 const handleChange = info => {
   if (info.file.status !== 'uploading') {
 
+    renderCanvas.value!.stopPlaying()
+
     let logReader = new LogFileReader(info)
     logReader.setProgressCallback((value) => {
       readingProgress.value = value * 100
@@ -90,10 +92,13 @@ const handleChange = info => {
       readingProgress.value = 0
       logFileData.value = data
       logFileDataHelper.value.logFileData = data
+      logFileDataHelper.value.reset()
 
       logFileData.value.fileSpecification.defaultColumns.forEach((col) => {
         addColumnAsDefaultToSvd(col)
       })
+
+      renderCanvas.value!.startPlaying()
     })
 
 

@@ -171,6 +171,11 @@ const stopPlaying = () => {
   canvasAction.value = CanvasActions.stopped
 }
 
+const startPlaying = () => {
+  canvasAction.value = CanvasActions.playing
+  playLoop()
+}
+
 watch(
   () => props.videoOptions,
   (newValue, oldValue) => {
@@ -207,6 +212,7 @@ watch(
 defineExpose({
   startRecording,
   stopRecording,
+  startPlaying,
   stopPlaying,
 })
 
