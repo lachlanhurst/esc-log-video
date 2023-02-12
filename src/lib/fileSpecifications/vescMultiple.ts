@@ -11,7 +11,7 @@ import * as dataTypes from '../dataTypes'
 import * as units from '../units'
 import { FileSpecification, FileSpecificationColumn, FileSpecificationCompositeColumn } from '../fileSpecification'
 import { vescColumns, vescCompositeColumns } from './vescSingle'
-import { PowerDerivedColumn } from './derivedColumns'
+import { PowerDerivedColumn, VescTimeFixDerivedColumn } from './derivedColumns'
 
 let current = new FileSpecificationColumn(
   'current_in_setup',
@@ -22,6 +22,9 @@ let current = new FileSpecificationColumn(
 
 let voltage = vescColumns.find((col) => {
   return col.label == "input_voltage"
+})!
+let vescTime = vescColumns.find((col) => {
+  return col.label == "ms_today"
 })!
 
 // we really only include the single VESC values in here so the
@@ -49,7 +52,8 @@ const multiVescColumns = [
 ]
 
 const derivedColumns = [
-  new PowerDerivedColumn(current, voltage)
+  new PowerDerivedColumn(current, voltage),
+  new VescTimeFixDerivedColumn(vescTime)
 ]
 
 export const vescMultipleFileSpecification = new FileSpecification(
@@ -59,6 +63,6 @@ export const vescMultipleFileSpecification = new FileSpecification(
   derivedColumns,
   vescCompositeColumns,
   [
-    vescColumns[0], vescColumns[2]
+    voltage, current
   ]
 )

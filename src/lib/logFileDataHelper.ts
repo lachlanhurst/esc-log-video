@@ -54,7 +54,7 @@ export class LogFileDataHelper {
     this._currentTime = 0
 
     for (let s of this._logFileData!.seriesList) {
-      if (s.column.dataType instanceof Time) {
+      if (s.column.dataType instanceof Time && !s.column.hidden) {
         this._timeSeries = s
         this._startTime = s.data[0]
         this._currentTime = s.data[0]

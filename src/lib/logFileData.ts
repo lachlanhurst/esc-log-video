@@ -85,6 +85,7 @@ export class LogFileData {
         // then skip and go onto next derived column
         continue
       }
+      dc.initialize()
       let derivedSeries = new LogFileDataSeries(dc)
       let derivedSeriesInputList = dc.columns.map(ccCol => this.seriesForColumn(ccCol))
       for (let i = 0; i < derivedSeriesInputList[0]!.data.length; i++) {

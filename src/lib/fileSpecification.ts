@@ -157,6 +157,11 @@ export class FileSpecificationDerivedColumn extends FileSpecificationColumn {
     return this._columns
   }
 
+  initialize() {
+    // perform any initialization that may or may not be required. Does not have to be
+    // overwritten
+  }
+
   /**
    * Takes a list of input values sourced from other data series and calculates
    * the derived value. The order of the inputs is the same as the order of

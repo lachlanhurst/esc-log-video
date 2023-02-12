@@ -15,11 +15,21 @@ import {
   FileSpecificationCompositeColumn,
   FileSpecificationDerivedColumn
 } from '../fileSpecification'
-import { PowerDerivedColumn } from './derivedColumns'
+import { PowerDerivedColumn, VescTimeFixDerivedColumn } from './derivedColumns'
 
 
 // specify a few columns that will later be used in definition
 // of some composite columns
+
+// hide the time series recorded by the VESC, instead we'll
+// show the user the fixed time (derived column added below)
+let vescTime = new FileSpecificationColumn(
+  'ms_today',
+  'Time today',
+  dataTypes.time,
+  units.millisecond,
+  true
+)
 let voltage = new FileSpecificationColumn(
   'input_voltage',
   'Input Voltage',
@@ -66,12 +76,7 @@ let longitude = new FileSpecificationColumn(
 )
 
 export const vescColumns = [
-  new FileSpecificationColumn(
-    'ms_today',
-    'Time today',
-    dataTypes.time,
-    units.millisecond
-  ),
+  vescTime,
   voltage,
   new FileSpecificationColumn(
     'temp_mos_max',
@@ -183,7 +188,8 @@ const vescSingleColumns = [
 
 
 const derivedColumns = [
-  new PowerDerivedColumn(current, voltage)
+  new PowerDerivedColumn(current, voltage),
+  new VescTimeFixDerivedColumn(vescTime)
 ]
 
 
@@ -208,6 +214,6 @@ export const vescSingleFileSpecification = new FileSpecification(
   derivedColumns,
   vescCompositeColumns,
   [
-    vescColumns[0], vescColumns[2]
+    voltage, current
   ]
 )
