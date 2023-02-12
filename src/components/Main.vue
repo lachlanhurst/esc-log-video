@@ -158,12 +158,39 @@ const updateColor = (color, colorAttribute) => {
   videoOptions[colorAttribute] = color.hex
 }
 
+/**
+ * Gets a new series column to add to the UI. Logic is
+ * to always add a column that hasn't already been added
+ * unless there are no new columns to add (then add existing)
+ * column.
+ */
+const getNewSeriesColumn = () => {
+  let maybeCol: FileSpecificationColumn | null = null
+  for (const col of logFileData.value!.seriesColumns) {
+    if (col.hidden) {
+      continue
+    }
+    maybeCol = col
+    let alreadyAdded = false
+    for(const svd of seriesVideoDetails.value) {
+      if (toRaw(svd.column) == toRaw(col) ) {
+        alreadyAdded = true
+      }
+    }
+    if (alreadyAdded) {
+      continue
+    }
+    return col
+  }
+  return maybeCol
+}
+
 const seriesVideoDetails = ref<SeriesVideoDetail[]>([])
 const addSeriesVideoDetails = () => {
   if (logFileData.value == null) {
     return
   }
-  addColumnAsDefaultToSvd(logFileData.value!.seriesColumns[0])
+  addColumnAsDefaultToSvd(getNewSeriesColumn()!)
 }
 
 const addColumnAsDefaultToSvd = (column: FileSpecificationColumn) => {
