@@ -49,6 +49,26 @@ class Map extends DataTypeVisualization {
     }
   }
 
+  toRadians(angle: number): number {
+    return angle * (Math.PI / 180);
+  }
+
+  /**
+   * Calculates distance from two points (lat long points)
+   * @param lon1
+   * @param lat1
+   * @param lon2
+   * @param lat2
+   * @returns distance in kms
+   */
+  distance(lon1: number, lat1: number, lon2: number, lat2: number): number {
+    lon1 = this.toRadians(lon1)
+    lat1 = this.toRadians(lat1)
+    lon2 = this.toRadians(lon2)
+    lat2 = this.toRadians(lat2)
+
+    return Math.acos(Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1)) * 6371
+  }
 
   initialize(
     cache: CacheObject,
@@ -71,6 +91,17 @@ class Map extends DataTypeVisualization {
         // recording the data, so we get many of the same coordinates. Filter these
         // out to make drawing quicker
         let isSameAsLast = prevPosition![0] == point[0] && prevPosition![0] == point[0]
+        if (isSameAsLast) {
+          return false
+        }
+        // calculate the distance between the last point, and the current point. If this
+        // is more than 200 meters, skip it. Generally the time between points is
+        // going to be fractions of a second, so the only time this would occur is when
+        // there is a noisy point.
+        let distance = this.distance(prevPosition[0], prevPosition[1], point[0], point[1])
+        if (distance > 0.2) {
+          return false
+        }
         prevPosition = point
         return !isSameAsLast
       }
