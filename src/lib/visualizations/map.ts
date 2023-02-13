@@ -60,12 +60,12 @@ class Map extends DataTypeVisualization {
     let prevPosition: number[] | null = null
 
     let points = logFileDataSeries.data.filter((point) => {
-      if (prevPosition == null) {
-        prevPosition = point
-        return true
-      } else if (point[0] == 0 && point[1] == 0) {
+      if (point[0] == 0 && point[1] == 0) {
         // this seems to happen in VESC log files
         return false
+      } else if (prevPosition == null) {
+        prevPosition = point
+        return true
       } else {
         // the vesc updates its data much faster that the GPS of the phone that is
         // recording the data, so we get many of the same coordinates. Filter these
