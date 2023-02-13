@@ -30,7 +30,6 @@ onMounted(() => {
   })
 })
 
-
 const renderCanvas = ref()
 const maskCanvas = ref()
 
@@ -147,7 +146,6 @@ const uploadFiles = ({ onSuccess, onError, file }) => {
     })
 }
 
-
 const videoOptions = reactive<VideoOptions>({
   fps: 30,
   backgroundColor: "black",
@@ -206,16 +204,11 @@ const addColumnAsDefaultToSvd = (column: FileSpecificationColumn) => {
 const handleRenderProgress = (e) => {
   renderProgress.value = e.value
   renderProgressMessage.value = e.message
-  console.log(e)
 }
 
 const availableColumns = computed(() => {
   return logFileData.value?.seriesColumns.filter(col => !col.hidden)
 })
-
-// watch(videoOptions, async (newVideoOptions, oldVideoOptions) => {
-//   console.log(newVideoOptions)
-// })
 
 watch(
   () => videoOptions,
@@ -465,11 +458,6 @@ watch(
   float: right;
   margin: 16px 0 16px 24px;
 }
-
-/* 
-[data-theme='dark'] .site-layout-content {
-  background: #141414;
-} */
 
 .render-background {
   background-image: linear-gradient(rgba(255, 255, 255, .75), rgba(255, 255, 255, .75)), url('../assets/checkered_background.jpg');
