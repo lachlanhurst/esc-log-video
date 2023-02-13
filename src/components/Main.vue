@@ -19,6 +19,8 @@ import { getDummyData } from '../lib/dummyData'
 import { FileSpecificationColumn } from '../lib/fileSpecification'
 
 
+const version = __APP_VERSION__
+
 onMounted(() => {
 
   let dummyData = getDummyData()
@@ -229,7 +231,13 @@ watch(
         <video-camera-add-outlined class="heading"/>
       </div>
       <a-row type="flex" justify="space-between" align="center" class="header-rhs">
-        <div class="heading">ESC Log Video</div>
+        <a-row align="bottom">
+          <div class="heading">ESC Log Video</div>
+          <a-col class="version-label" style="line-height: normal;">
+            <a-row >v{{ version }}</a-row>
+          </a-col>
+        </a-row>
+
         <div>
           <a-col style="line-height: normal; color: white; padding-top: 18px;">
             <a-space direction="vertical" size="12">
@@ -429,6 +437,14 @@ watch(
   font-size: 3.2em;
   font-weight: 800;
   letter-spacing: -4px;
+}
+
+.version-label {
+  color: rgba(255, 255, 255, .35);
+  letter-spacing: -1px;
+  padding-left: 10px;
+  padding-bottom: 14px;
+  font-weight: 500;
 }
 
 .site-layout-content {
