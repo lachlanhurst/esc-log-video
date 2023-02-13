@@ -473,6 +473,7 @@ watch(
 
 .render-background {
   background-image: linear-gradient(rgba(255, 255, 255, .75), rgba(255, 255, 255, .75)), url('../assets/checkered_background.jpg');
+  overflow: scroll;
 }
 
 .color-picker {
