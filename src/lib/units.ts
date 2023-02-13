@@ -80,6 +80,10 @@ class Percent extends Unit {
   convert(value) {
     return value * 100
   }
+
+  toBaseUnit(value: any) {
+    return value / 100.0
+  }
 }
 
 class PercentFraction extends Unit {
