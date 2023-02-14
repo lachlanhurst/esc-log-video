@@ -21,6 +21,8 @@ interface RenderProgress {
 
 const emit = defineEmits<{
   (e: 'renderProgress', progress: RenderProgress): void
+  (e: 'renderStarted'): void
+  (e: 'renderStopped'): void
 }>()
 
 const CanvasActions = {
@@ -38,7 +40,7 @@ let canvasRenderer: CanvasRenderer | null = null
 
 onMounted(() => {
   CanvasCapture.init(renderCanvas.value!, {
-    showRecDot: true,
+    showRecDot: false,
     showAlerts: true,
     showDialogs: true,
     verbose: false,
@@ -122,6 +124,7 @@ const renderLoop = () => {
 
 
 const startRecording = () => {
+  emit('renderStarted')
   // switch canvas to render loop
   canvasAction.value = CanvasActions.rendering
   // set the logFileDataHelper back to the start time
@@ -147,6 +150,7 @@ const startRecording = () => {
         'renderProgress',
         { value: 0, message: "" }
       )
+      emit('renderStopped')
     },
     // ffmpegOptions: {
     //   '-c:v': 'libx264',

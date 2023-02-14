@@ -14,6 +14,7 @@ const props = defineProps({
   availableColumns: Array as PropType<FileSpecificationColumn[]>,
   seriesVideoDetail: Object as PropType<SeriesVideoDetail>,
   seriesVideoDetailList: Object as PropType<SeriesVideoDetail[]>,
+  disabled: Boolean,
 })
 
 const seriesOptions = computed(() => {
@@ -144,17 +145,17 @@ watch(
         <a-form :model="props.seriesVideoDetail" name="basic" layout="horizontal" :label-col="{ span: 5 }"
           :wrapper-col="{ span: 18 }">
           <a-form-item label="Series" name="series" class="form-margin">
-            <a-select :value="selectedSeriesName" @change="seriesSelected($event)" :options="seriesOptions">
+            <a-select :value="selectedSeriesName" @change="seriesSelected($event)" :options="seriesOptions" :disabled="props.disabled">
             </a-select>
           </a-form-item>
           <a-form-item label="Units" name="unit" class="form-margin">
-            <a-select :value="selectedUnitName" @change="unitSelected($event)" :options="unitOptions" />
+            <a-select :value="selectedUnitName" @change="unitSelected($event)" :options="unitOptions" :disabled="props.disabled"/>
           </a-form-item>
           <a-form-item name="label" label="Label" class="form-margin">
-            <a-input v-model:value="props.seriesVideoDetail!.name" placeholder="Series label" />
+            <a-input v-model:value="props.seriesVideoDetail!.name" placeholder="Series label" :disabled="props.disabled"/>
           </a-form-item>
           <a-form-item name="visualization" label="Display as" class="form-margin">
-            <a-select :value="selectedVisName" @change="visSelected($event)" :options="visualizationOptions"/>
+            <a-select :value="selectedVisName" @change="visSelected($event)" :options="visualizationOptions" :disabled="props.disabled"/>
           </a-form-item>
         </a-form>
       </a-col>
@@ -162,7 +163,7 @@ watch(
         <div style="display: flex; flex-direction: column; align-items: flex-end; height: 100%; width: 100%; ">
           <div class="form-margin">
             <a-tooltip title="Move series up">
-              <a-button :disabled="props.seriesVideoDetail == props.seriesVideoDetailList![0]" @click="moveSeries(-1)">
+              <a-button :disabled="props.seriesVideoDetail == props.seriesVideoDetailList![0] || props.disabled" @click="moveSeries(-1)">
                 <template #icon>
                   <CaretUpFilled />
                 </template>
@@ -172,7 +173,7 @@ watch(
           </div>
           <div class="form-margin">
             <a-tooltip title="Remove this series">
-              <a-button @click="removeSeries()">
+              <a-button @click="removeSeries()" :disabled="props.disabled">
                 <template #icon>
                   <DeleteOutlined />
                 </template>
@@ -182,7 +183,7 @@ watch(
           
           <div class="form-margin">
             <a-tooltip title="Move series down">
-              <a-button :disabled="props.seriesVideoDetail == props.seriesVideoDetailList![props.seriesVideoDetailList!.length-1]" @click="moveSeries(1)">
+              <a-button :disabled="props.seriesVideoDetail == props.seriesVideoDetailList![props.seriesVideoDetailList!.length - 1] || props.disabled" @click="moveSeries(1)">
                 <template #icon>
                   <CaretDownFilled />
                 </template>

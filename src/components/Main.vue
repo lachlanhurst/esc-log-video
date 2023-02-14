@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, watch, onMounted, computed, toRaw } from 'vue'
-import { QuestionOutlined, InboxOutlined, VideoCameraAddOutlined, PlusOutlined } from '@ant-design/icons-vue'
+import { QuestionOutlined, InboxOutlined, VideoCameraAddOutlined, PlusOutlined, WarningOutlined } from '@ant-design/icons-vue'
 import { Empty } from 'ant-design-vue'
 import { message } from 'ant-design-vue'
 import { Compact } from '@ckpack/vue-color'
@@ -60,6 +60,9 @@ const rightPanelTabList = [
 
 const rightPanelTabKey = ref('video')
 const onRightPanelTabChange = (value: string) => {
+  if (rendering.value) {
+    return
+  }
   rightPanelTabKey.value = value
 
   if (value == "mask") {
@@ -71,6 +74,7 @@ const fileList = ref([])
 const reading = ref(false)
 const readingProgress = ref(0)
 const renderProgress = ref<number>(0.0)
+const rendering = ref<boolean>(false)
 const renderProgressMessage = ref<string>("")
 const logFileData = ref<null | LogFileData>(null)
 const logFileDataHelper = ref<LogFileDataHelper>(new LogFileDataHelper())
@@ -208,6 +212,14 @@ const handleRenderProgress = (e) => {
   renderProgressMessage.value = e.message
 }
 
+const handleRenderStarted = () => {
+  rendering.value = true
+}
+
+const handleRenderStopped = () => {
+  rendering.value = false
+}
+
 const availableColumns = computed(() => {
   return logFileData.value?.seriesColumns.filter(col => !col.hidden)
 })
@@ -264,11 +276,21 @@ watch(
                   </div>
                 </template>
                 <a-space direction="vertical" style="width: 100%">
-                  <a-upload-dragger v-model:fileList="fileList" name="file" :multiple="false" :showUploadList="false" :customRequest="uploadFiles"
-                    @change="handleChange">
+                  <a-upload-dragger
+                    v-model:fileList="fileList"
+                    name="file"
+                    :multiple="false"
+                    :showUploadList="false"
+                    :customRequest="uploadFiles"
+                    :disabled="rendering"
+                    @change="handleChange"
+                  >
                     <a-row align="middle" justify="center">
                       <a-space>
-                        <p class="ant-upload-drag-icon" style="margin-bottom: 0px"><inbox-outlined></inbox-outlined></p>
+                        <p class="ant-upload-drag-icon" style="margin-bottom: 0px">
+                          <inbox-outlined v-if="rendering" :style="{ color: 'rgba(0, 0, 0, 0.25)'}"></inbox-outlined>
+                          <inbox-outlined v-else="rendering"></inbox-outlined>
+                        </p>
                         <p class="ant-upload-text">Click or drag file to this area to open</p>
                       </a-space>
                     </a-row>
@@ -285,9 +307,13 @@ watch(
               </a-card>
 
               <a-card title="Video details" style="width: 100%">
-                <a-form :model="videoOptions" :label-col="{style: {width: '130px'}}" :wrapper-col="{span: 14}">
+                <a-form v-if="!rendering" :model="videoOptions" :label-col="{style: {width: '130px'}}" :wrapper-col="{span: 14}">
                   <a-form-item label="Framerate (fps)" class="form-item-less-margin">
-                    <a-input-number v-model:value="videoOptions.fps" :min="1" :max="120" />
+                    <a-input-number
+                      v-model:value="videoOptions.fps"
+                      :min="1"
+                      :max="120"
+                    />
                   </a-form-item>
                   <a-form-item label="Background color" class="form-item-less-margin">
                     <Compact :modelValue="videoOptions.backgroundColor" class="color-picker" @update:modelValue="updateColor($event, 'backgroundColor')"/>
@@ -297,9 +323,21 @@ watch(
                   </a-form-item>
 
                 </a-form>
+                <a-form v-else :model="videoOptions" :label-col="{style: {width: '130px'}}" :wrapper-col="{span: 14}" style="height: 188px;">
+                  <a-row class="flex" align="middle" justify="center" style="height: 100%">
+                    <a-col align="center">
+                      <div>
+                        <warning-outlined :style="{ fontSize: '64px', color: 'rgba(0, 0, 0, 0.25)'}" />
+                      </div>
+                      <div style="padding-top:10px">
+                        <a-typography-text type="secondary">
+                          No changes permitted while rendering
+                        </a-typography-text>
+                      </div>
+                    </a-col>
+                  </a-row>
+                </a-form>
               </a-card>
-
-
 
               <div style="width: 100%">
                 <a-card  style="width: 100%">
@@ -308,7 +346,7 @@ watch(
                     <div class="ant-card-meta-description" style="padding-top: 0px; font-weight: 400; font-size: 14px; margin-top: -8px;">Log data series rendered to video</div>
                   </template>
                   <template #extra>
-                    <a-button type="default"  @click="addSeriesVideoDetails">
+                    <a-button type="default" :disabled="rendering" @click="addSeriesVideoDetails">
                       <template #icon>
                         <PlusOutlined />
                       </template>
@@ -322,6 +360,7 @@ watch(
                   :series-video-detail="seriesVideoDetail"
                   :seriesVideoDetailList="seriesVideoDetails"
                   :available-columns="availableColumns"
+                  :disabled="rendering"
                   style="margin-bottom: 1px; margin-top: 1px;"
                 />
 
@@ -367,13 +406,15 @@ watch(
                   :seriesVideoDetails="seriesVideoDetails"
                   :logFileDataHelper="logFileDataHelper"
                   @render-progress="handleRenderProgress($event)"
+                  @render-started="handleRenderStarted()"
+                  @render-stopped="handleRenderStopped()"
                 />
               </div>
             </a-row>
 
             <a-row type="flex" align="middle" :gutter="[8, 8]" style="padding: 8px 0px">
               <a-col class="gutter-row">
-                <a-button @click="startRender">
+                <a-button @click="startRender" :disabled="rendering">
                   Start video render
                 </a-button>
               </a-col>
