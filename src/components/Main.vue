@@ -426,7 +426,7 @@ watch(
 
               <a-col flex="auto" class="gutter-row">
                 <div> {{ renderProgressMessage }}</div>
-                <a-progress :percent="renderProgress * 100" status="active" :showInfo="false"/>
+                <a-progress :percent="renderProgress * 100" status="active" :showInfo="false" trailColor="white"/>
               </a-col>
 
             </a-row>
