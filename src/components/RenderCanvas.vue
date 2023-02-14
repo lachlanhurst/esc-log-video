@@ -64,9 +64,12 @@ onMounted(() => {
 
 const draw = () => {
   if (renderCanvas.value) {
-    let size = canvasRenderer!.calculateSize()
-    renderCanvas.value!.width = size.width
-    renderCanvas.value!.height = size.height
+
+    if (canvasAction.value != CanvasActions.rendering) {
+      let size = canvasRenderer!.calculateSize()
+      renderCanvas.value!.width = size.width
+      renderCanvas.value!.height = size.height
+    }
 
     canvasRenderer?.draw()
   } else {
