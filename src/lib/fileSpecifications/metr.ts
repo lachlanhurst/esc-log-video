@@ -155,7 +155,7 @@ export class SummedCurrentColumn extends FileSpecificationDerivedColumn {
 let power1 = new PowerDerivedColumn(battery_current_1, voltage)
 
 export const metrFileSpecification1 = new FileSpecification(
-  'Metr Log File 4',
+  'Metr Log File 1',
   ',',
   [
     time,
@@ -164,13 +164,7 @@ export const metrFileSpecification1 = new FileSpecification(
     voltage,
     speed,
     battery_current_1,
-    battery_current_2,
-    battery_current_3,
-    battery_current_4,
     motor_current_1,
-    motor_current_2,
-    motor_current_3,
-    motor_current_4,
     latitude,
     longitude,
   ],
@@ -195,7 +189,7 @@ let totalMotorCurrent2 = new SummedCurrentColumn(
 let power2 = new PowerDerivedColumn(totalBatteryCurrent2, voltage)
 
 export const metrFileSpecification2 = new FileSpecification(
-  'Metr Log File 4',
+  'Metr Log File 2',
   ',',
   [
     time,
@@ -205,12 +199,8 @@ export const metrFileSpecification2 = new FileSpecification(
     speed,
     battery_current_1,
     battery_current_2,
-    battery_current_3,
-    battery_current_4,
     motor_current_1,
     motor_current_2,
-    motor_current_3,
-    motor_current_4,
     latitude,
     longitude,
   ],
