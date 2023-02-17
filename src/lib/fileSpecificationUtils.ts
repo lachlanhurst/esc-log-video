@@ -1,4 +1,5 @@
 import { FileSpecification } from './fileSpecification'
+import { exampleFileSpecification } from './fileSpecifications/example'
 import { floatControlFileSpecification } from './fileSpecifications/floatControl'
 import { metrFileSpecification1, metrFileSpecification2, metrFileSpecification4 } from './fileSpecifications/metr'
 import { vescMultipleFileSpecification } from './fileSpecifications/vescMultiple'
@@ -11,4 +12,5 @@ export const allFileSpecifications: FileSpecification[] = [
   metrFileSpecification1,
   metrFileSpecification2,
   metrFileSpecification4,
+  exampleFileSpecification,
 ]
