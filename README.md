@@ -1,5 +1,5 @@
 # ESC Log Video
-Tool for generating data overlay videos from VESC log files.
+Tool for generating data overlay videos from VESC log files. Checkout the [YouTube video here](https://youtu.be/PwsgrGIs53U).
 
 To use the tool visit the following link. It's a pure web application with no installation required.
 
