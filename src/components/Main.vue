@@ -264,9 +264,9 @@ watch(
       </a-row>
     </a-layout-header>
     <a-layout-content :style="{ background: '#f4f4f4', }">
-      <a-row type="flex" :style="{ padding: '8px 8px', height: '100%' }" :gutter="[8, 8]">
-        <a-col class="gutter-row" flex="500px" style="height: 100% ; overflow-y: scroll;">
-          <div>
+      <a-row type="flex" :style="{ padding: '8px 8px', height: '100%', width: '100%' }" :gutter="[8, 8]">
+        <a-col class="gutter-row" flex="500px" style="height: 100%">
+          <div style="overflow-y: scroll; width: 100%; height: 100%">
             <a-row type="flex" :gutter="[0, 8]">
 
               <a-card style="width: 100%">
