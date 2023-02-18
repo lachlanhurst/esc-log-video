@@ -102,7 +102,6 @@ export class LogFileReader {
         return;
       }
       if (offset >= fileSize) {
-        console.log("Done reading file");
         callbackDone()
         return;
       }
@@ -188,7 +187,7 @@ export class LogFileReader {
     })
 
     parser.on('end', function () {
-      console.log('parser end')
+      // console.log('parser end')
     })
 
     // some complicated code to read file in chunks and write those chunks

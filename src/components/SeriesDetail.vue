@@ -125,7 +125,6 @@ const removeSeries = () => {
 watch(
   () => props.seriesVideoDetail,
   (newValue, oldValue) => {
-    console.log(newValue)
     selectedUnitName.value = newValue!.unit!.name
     selectedSeriesName.value = newValue!.column!.name
     selectedVisName.value = newValue!.visualization!.name

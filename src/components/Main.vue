@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, watch, onMounted, computed, toRaw } from 'vue'
-import { QuestionOutlined, InboxOutlined, VideoCameraAddOutlined, PlusOutlined, WarningOutlined } from '@ant-design/icons-vue'
+import { QuestionOutlined, InboxOutlined, VideoCameraAddOutlined, PlusOutlined, WarningOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons-vue'
 import { Empty } from 'ant-design-vue'
 import { message } from 'ant-design-vue'
 import { Compact } from '@ckpack/vue-color'
@@ -387,14 +387,13 @@ watch(
 
           <a-card style="width: 100%" :tab-list="rightPanelTabList" :active-tab-key="rightPanelTabKey" size="small"
             @tabChange="key => onRightPanelTabChange(key)">
-            <template #tabBarExtraContent>
-              <!-- <a href="#">More</a> -->
+            <!-- <template #tabBarExtraContent>
               <a-button shape="circle">
                 <template #icon>
                   <QuestionOutlined />
                 </template>
               </a-button>
-            </template>
+            </template> -->
           </a-card>
 
           <template v-if="rightPanelTabKey === 'video'">
@@ -414,12 +413,15 @@ watch(
 
             <a-row type="flex" align="middle" :gutter="[8, 8]" style="padding: 8px 0px">
               <a-col class="gutter-row">
-                <a-button @click="startRender" :disabled="rendering">
-                  Start video render
+                <a-button @click="startRender" :disabled="rendering" type="primary">
+                  <template #icon>
+                    <PlayCircleOutlined />
+                  </template>
+                  Create video
                 </a-button>
               </a-col>
               <a-col class="gutter-row">
-                <a-button @click="cancelRender">
+                <a-button @click="cancelRender" :disabled="!rendering">
                   Cancel
                 </a-button>
               </a-col>
