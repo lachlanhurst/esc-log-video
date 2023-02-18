@@ -7,32 +7,43 @@ import { PowerDerivedColumn } from './derivedColumns'
 
 // specify a few columns that will later be used in definition
 // of some composite columns
-let roll = new FileSpecificationColumn(
+const roll = new FileSpecificationColumn(
   'Roll',
   'Roll',
   dataTypes.angle,
   units.degree
 )
-let pitch = new FileSpecificationColumn(
+const pitch = new FileSpecificationColumn(
   'Pitch',
   'Pitch',
   dataTypes.angle,
   units.degree
 )
 // note: no yaw included in float control output
-let current = new FileSpecificationColumn(
+const current = new FileSpecificationColumn(
   'I-Battery',
   'Battery current',
   dataTypes.current,
   units.ampere
 )
-let voltage = new FileSpecificationColumn(
+const voltage = new FileSpecificationColumn(
   'Voltage',
   'Voltage',
   dataTypes.voltage,
   units.volt
 )
-
+const speed = new FileSpecificationColumn(
+  'Speed(km/h)',
+  'Speed',
+  dataTypes.speed,
+  units.kilometersPerHour
+)
+const motorCurrent = new FileSpecificationColumn(
+  'I-Motor',
+  'Motor current',
+  dataTypes.current,
+  units.ampere
+)
 
 const floatControlColumns = [
   new FileSpecificationColumn(
@@ -54,12 +65,7 @@ const floatControlColumns = [
     dataTypes.temperature,
     units.degreeCelsius
   ),
-  new FileSpecificationColumn(
-    'I-Motor',
-    'Motor current',
-    dataTypes.current,
-    units.ampere
-  ),
+  motorCurrent,
   new FileSpecificationColumn(
     'Requested Amps',
     'Requested motor current',
@@ -73,12 +79,7 @@ const floatControlColumns = [
     dataTypes.current,
     units.ampere
   ),
-  new FileSpecificationColumn(
-    'Speed(km/h)',
-    'Speed',
-    dataTypes.speed,
-    units.kilometersPerHour
-  ),
+  speed,
   new FileSpecificationColumn(
     'Distance(km)',
     'Distance',
@@ -156,20 +157,18 @@ const floatControlColumns = [
 ]
 
 
-const derivedColumns = [
-  new PowerDerivedColumn(current, voltage)
-]
-
+const power = new PowerDerivedColumn(current, voltage)
 
 // note: no yaw included in float control output, so lets just
 // throw in pitch as yaw. The only vis currently implemented that
 // uses this composite column doesn't use yaw anyway.
+const orientation = new FileSpecificationCompositeColumn(
+  [pitch, pitch, roll],
+  "Orientation",
+  dataTypes.orientation
+)
 const floatControlCompositeColumns = [
-  new FileSpecificationCompositeColumn(
-    [pitch, pitch, roll],
-    "Orientation",
-    dataTypes.orientation
-  ),
+  orientation,
 ]
 
 
@@ -177,9 +176,9 @@ export const floatControlFileSpecification = new FileSpecification(
   'Float Control Log File',
   ',',
   floatControlColumns,
-  derivedColumns,
+  [power],
   floatControlCompositeColumns,
   [
-    floatControlColumns[0], floatControlColumns[8], floatControlColumns[4]
+    orientation, speed, power, motorCurrent
   ]
 )
