@@ -8,6 +8,7 @@ import { Compact } from '@ckpack/vue-color'
 import RenderCanvas from './RenderCanvas.vue'
 import MaskCanvas from './MaskCanvas.vue'
 import SeriesDetail from './SeriesDetail.vue'
+import ReleaseNotes from './ReleaseNotes.vue'
 import { SeriesVideoDetail } from '../lib/seriesVideoDetail'
 import { VideoOptions } from '../lib/videoOptions'
 
@@ -379,9 +380,10 @@ watch(
                   </template>
                 </Empty>
               </div>
-
+              <ReleaseNotes></ReleaseNotes>
             </a-row>
           </div>
+
         </a-col>
         <a-col class="gutter-row row" flex="auto" style="height: 100%">
 
