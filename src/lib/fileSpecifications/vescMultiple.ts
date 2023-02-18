@@ -26,6 +26,12 @@ let voltage = vescColumns.find((col) => {
 let vescTime = vescColumns.find((col) => {
   return col.label == "ms_today"
 })!
+let speed = vescColumns.find((col) => {
+  return col.dataType == dataTypes.speed
+})!
+let position = vescCompositeColumns.find((col) => {
+  return col.dataType == dataTypes.position
+})!
 
 // we really only include the single VESC values in here so the
 // file format auto detect works
@@ -51,8 +57,10 @@ const multiVescColumns = [
   ),
 ]
 
+const power = new PowerDerivedColumn(current, voltage)
+
 const derivedColumns = [
-  new PowerDerivedColumn(current, voltage),
+  power,
   new VescTimeFixDerivedColumn(vescTime)
 ]
 
@@ -63,6 +71,6 @@ export const vescMultipleFileSpecification = new FileSpecification(
   derivedColumns,
   vescCompositeColumns,
   [
-    voltage, current
+    position, speed, power
   ]
 )

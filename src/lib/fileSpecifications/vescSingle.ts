@@ -74,6 +74,13 @@ let longitude = new FileSpecificationColumn(
   units.latitudeOrLongitude,
   true
 )
+let speed = new FileSpecificationColumn(
+  'speed_meters_per_sec',
+  'Speed',
+  dataTypes.speed,
+  units.metersPerSecond
+)
+
 
 export const vescColumns = [
   vescTime,
@@ -90,12 +97,7 @@ export const vescColumns = [
     dataTypes.temperature,
     units.degreeCelsius
   ),
-  new FileSpecificationColumn(
-    'speed_meters_per_sec',
-    'Speed',
-    dataTypes.speed,
-    units.metersPerSecond
-  ),
+  speed,
   new FileSpecificationColumn(
     'duty_cycle',
     'Duty cycle',
@@ -187,10 +189,19 @@ const vescSingleColumns = [
 ]
 
 
+let power = new PowerDerivedColumn(current, voltage)
+
 const derivedColumns = [
-  new PowerDerivedColumn(current, voltage),
+  power,
   new VescTimeFixDerivedColumn(vescTime)
 ]
+
+
+const position = new FileSpecificationCompositeColumn(
+  [longitude, latitude],
+  "Position",
+  dataTypes.position
+)
 
 
 export const vescCompositeColumns = [
@@ -199,11 +210,7 @@ export const vescCompositeColumns = [
     "Orientation",
     dataTypes.orientation
   ),
-  new FileSpecificationCompositeColumn(
-    [longitude, latitude],
-    "Position",
-    dataTypes.position
-  ),
+  position,
 ]
 
 
@@ -214,6 +221,6 @@ export const vescSingleFileSpecification = new FileSpecification(
   derivedColumns,
   vescCompositeColumns,
   [
-    voltage, current
+    position, speed, power
   ]
 )
