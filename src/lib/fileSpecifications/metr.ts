@@ -170,7 +170,7 @@ export const metrFileSpecification1 = new FileSpecification(
   ],
   [power1],
   [position],
-  [voltage, speed, position]
+  [speed, position, power1]
 )
 
 //
@@ -206,7 +206,7 @@ export const metrFileSpecification2 = new FileSpecification(
   ],
   [totalBatteryCurrent2, totalMotorCurrent2, power2],
   [position],
-  [voltage, speed, position]
+  [speed, position, power2]
 )
 
 
@@ -247,5 +247,5 @@ export const metrFileSpecification4 = new FileSpecification(
   ],
   [totalBatteryCurrent4, totalMotorCurrent4, power4],
   [position],
-  [voltage, speed, position]
+  [speed, position, power4]
 )
