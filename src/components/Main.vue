@@ -10,7 +10,7 @@ import MaskCanvas from './MaskCanvas.vue'
 import SeriesDetail from './SeriesDetail.vue'
 import ReleaseNotes from './ReleaseNotes.vue'
 import { SeriesVideoDetail } from '../lib/seriesVideoDetail'
-import { VideoOptions } from '../lib/videoOptions'
+import { VideoOptions, resolutions, resolutionDefault } from '../lib/videoOptions'
 
 import { LogFileReader } from '../lib/logFile'
 import { LogFileData } from '../lib/logFileData'
@@ -155,9 +155,28 @@ const uploadFiles = ({ onSuccess, onError, file }) => {
 
 const videoOptions = reactive<VideoOptions>({
   fps: 30,
+  resolution: resolutionDefault,
   backgroundColor: "black",
   foregroundColor: "white",
 })
+
+const resolutionOptions = computed(() => {
+  return resolutions.map((res) => {
+    return {
+      value: res.name,
+      label: res.name,
+      resolution: res
+    }
+  })
+})
+const selectedResolutionName = ref<string>(videoOptions.resolution.name)
+const resolutionSelected = (resolutionName) => {
+  selectedResolutionName.value = resolutionName
+
+  let newResolution = resolutionOptions.value.find(res => res.label == resolutionName)!.resolution
+  videoOptions.resolution = newResolution
+}
+
 
 const updateColor = (color, colorAttribute) => {
   videoOptions[colorAttribute] = color.hex
@@ -309,6 +328,9 @@ watch(
 
               <a-card title="Video details" style="width: 100%">
                 <a-form v-if="!rendering" :model="videoOptions" :label-col="{style: {width: '130px'}}" :wrapper-col="{span: 14}">
+                  <a-form-item label="Target resolution" name="resolution" class="form-item-less-margin">
+                    <a-select :value="selectedResolutionName" @change="resolutionSelected($event)" :options="resolutionOptions"/>
+                  </a-form-item>
                   <a-form-item label="Framerate (fps)" class="form-item-less-margin">
                     <a-input-number
                       v-model:value="videoOptions.fps"

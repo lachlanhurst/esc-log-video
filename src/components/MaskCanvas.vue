@@ -35,8 +35,14 @@ onMounted(() => {
 const draw = () => {
 
   let size = maskRenderer!.calculateSize()
-  canvas.value!.width = size.width
-  canvas.value!.height = size.height
+  canvas.value!.style.width = size.width + 'px'
+  canvas.value!.style.height = size.height + 'px'
+
+  const scaleFactor = props.videoOptions!.resolution.scaleFactor
+  canvas.value!.width = size.width * scaleFactor
+  canvas.value!.height = size.height * scaleFactor
+
+  context.value!.scale(scaleFactor, scaleFactor)
 
   maskRenderer?.draw()
 }

@@ -67,8 +67,15 @@ const draw = () => {
 
     if (canvasAction.value != CanvasActions.rendering) {
       let size = canvasRenderer!.calculateSize()
-      renderCanvas.value!.width = size.width
-      renderCanvas.value!.height = size.height
+
+      renderCanvas.value!.style.width = size.width + 'px'
+      renderCanvas.value!.style.height = size.height + 'px'
+
+      const scaleFactor = props.videoOptions!.resolution.scaleFactor
+      renderCanvas.value!.width = size.width * scaleFactor
+      renderCanvas.value!.height = size.height * scaleFactor
+
+      context.value!.scale(scaleFactor, scaleFactor)
     }
 
     canvasRenderer?.draw()
