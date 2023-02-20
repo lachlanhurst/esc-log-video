@@ -139,6 +139,7 @@ class Map extends DataTypeVisualization {
     // don't need to redraw it every frame.
     let baseMapCanvas = new OffscreenCanvas(cache.width, cache.height)
     let baseMapContext = baseMapCanvas.getContext('2d')! as OffscreenCanvasRenderingContext2D
+    this._setCanvasScaling(baseMapContext, videoOptions.resolution.scaleFactor)
     baseMapContext.strokeStyle = videoOptions.foregroundColor
     baseMapContext.lineWidth = 1
     baseMapContext.beginPath()

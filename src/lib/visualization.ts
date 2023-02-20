@@ -65,6 +65,18 @@ export class DataTypeVisualization {
     return baseY + yRel
   }
 
+  _setCanvasScaling(context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D, scaleFactor: number) {
+
+    const canvas = context.canvas
+    const width = canvas.width
+    const height = canvas.height
+
+    canvas.width = width * scaleFactor
+    canvas.height = height * scaleFactor
+
+    context.scale(scaleFactor, scaleFactor)
+  }
+
   /**
    * Function is called after each change to the data, VideoOptions, or
    * SeriesVideoDetails. You should do any initialization of details needed

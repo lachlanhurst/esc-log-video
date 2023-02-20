@@ -122,6 +122,7 @@ class Dial extends DataTypeVisualization {
     let dialRing = new OffscreenCanvas(this._dialHeight, this._dialHeight)
     
     let drContext = dialRing.getContext('2d')! as OffscreenCanvasRenderingContext2D
+    this._setCanvasScaling(drContext, videoOptions.resolution.scaleFactor)
 
     drContext.beginPath()
     drContext.strokeStyle = videoOptions.foregroundColor
@@ -194,6 +195,7 @@ class Dial extends DataTypeVisualization {
 
     let arrow = new OffscreenCanvas(this._dialHeight, this._dialHeight)
     let arrowContext = arrow.getContext('2d')! as OffscreenCanvasRenderingContext2D
+    this._setCanvasScaling(arrowContext, videoOptions.resolution.scaleFactor)
     arrowContext.beginPath()
     arrowContext.strokeStyle = videoOptions.foregroundColor
     arrowContext.fillStyle = videoOptions.backgroundColor

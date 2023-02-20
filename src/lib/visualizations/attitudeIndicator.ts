@@ -83,6 +83,7 @@ class AttitudeIndicator extends DataTypeVisualization {
     let squareSize = this.rad * 4
     let halfSquare = new OffscreenCanvas(squareSize, squareSize)
     let context = halfSquare.getContext('2d')! as OffscreenCanvasRenderingContext2D
+    this._setCanvasScaling(context, videoOptions.resolution.scaleFactor)
     let tilePattern = context.createPattern(tile, 'repeat')!
     context.beginPath()
     context.fillStyle = tilePattern
@@ -159,6 +160,7 @@ class AttitudeIndicator extends DataTypeVisualization {
 
     let semiCircleRotated = new OffscreenCanvas(circleDiameter*2, circleDiameter*2)
     let semiCircleRotatedContext = semiCircleRotated.getContext('2d')! as OffscreenCanvasRenderingContext2D
+    this._setCanvasScaling(semiCircleRotatedContext, videoOptions.resolution.scaleFactor)
     semiCircleRotatedContext.translate(circleDiameter, circleDiameter)
     semiCircleRotatedContext.rotate(roll)
     semiCircleRotatedContext.drawImage(semiCircle, -circleDiameter, -circleDiameter , circleDiameter * 2, circleDiameter * 2)
@@ -168,6 +170,7 @@ class AttitudeIndicator extends DataTypeVisualization {
 
     let semiCircleTranslated = new OffscreenCanvas(circleDiameter, circleDiameter)
     let semiCircleTranslatedContext = semiCircleTranslated.getContext('2d')! as OffscreenCanvasRenderingContext2D
+    this._setCanvasScaling(semiCircleTranslatedContext, videoOptions.resolution.scaleFactor)
 
     semiCircleTranslatedContext.beginPath()
     semiCircleTranslatedContext.arc(circleRadius, circleRadius, circleRadius, 0, 2 * Math.PI, false)
@@ -177,7 +180,7 @@ class AttitudeIndicator extends DataTypeVisualization {
     semiCircleTranslatedContext.drawImage(semiCircleRotated, -circleRadius, -circleRadius, circleDiameter*2, circleDiameter*2)
     semiCircleTranslatedContext.translate(0, pitchPx)
 
-    context.drawImage(semiCircleTranslated, circleCenterX - circleRadius , circleCenterY - circleRadius )
+    context.drawImage(semiCircleTranslated, circleCenterX - circleRadius , circleCenterY - circleRadius, circleDiameter, circleDiameter )
 
     context.beginPath()
     context.strokeStyle = videoOptions.foregroundColor
