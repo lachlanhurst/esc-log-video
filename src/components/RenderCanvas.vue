@@ -228,6 +228,7 @@ defineExpose({
   stopRecording,
   startPlaying,
   stopPlaying,
+  draw,
 })
 
 </script>

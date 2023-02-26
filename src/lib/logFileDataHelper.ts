@@ -2,7 +2,7 @@ import { LogFileData, LogFileDataSeries } from './logFileData'
 import { FileSpecificationColumn, FileSpecificationCompositeColumn } from './fileSpecification'
 
 import { Time } from './dataTypes'
-import { Unit } from './units'
+import { Unit, minute } from './units'
 
 export class LogFileDataHelper {
   _logFileData: LogFileData | null
@@ -34,6 +34,52 @@ export class LogFileDataHelper {
 
   get timeSeries(): LogFileDataSeries | null {
     return this._timeSeries
+  }
+
+  get startTime(): number {
+    if (this._timeSeries) {
+      return this._timeSeries!.data[0]
+    } else {
+      return 0
+    }
+  }
+
+  get endTime(): number {
+    if (this._timeSeries) {
+      return this._timeSeries!.data[this._timeSeries!.data.length - 1]
+    } else {
+      return 1
+    }
+  }
+
+  get startTimeLabel(): string {
+    return minute.format(minute.convert(this.startTime))
+  }
+
+  get endTimeLabel(): string {
+    return minute.format(minute.convert(Math.round(this.endTime)))
+  }
+
+  get startTimeClipped(): number {
+    return this._startTime
+  }
+
+  set startTimeClipped(value: number) {
+    this._startTime = value
+    this._currentTime = this._startTime
+    this._currentIndex = 0
+    this._updateIndexToCurrentTime()
+  }
+
+  get endTimeClipped(): number {
+    return this._endTime
+  }
+
+  set endTimeClipped(value: number) {
+    this._endTime = value
+    this._currentTime = this._endTime
+    this._currentIndex = 0
+    this._updateIndexToCurrentTime()
   }
 
   /**
@@ -80,9 +126,23 @@ export class LogFileDataHelper {
     }
 
     this._currentIndex = 0
-    this._startTime = this._timeSeries!.data[0]
-    this._currentTime = this._timeSeries!.data[0]
+    this._currentTime = this._startTime
+    this._updateIndexToCurrentTime()
   }
+
+  _updateIndexToCurrentTime() {
+    if (this._currentIndex != this._timeSeries!.data.length - 1) {
+      while (true) {
+        let timeAtNextIndex = this._timeSeries!.data[this._currentIndex + 1]
+        if (this._currentTime >= timeAtNextIndex) {
+          this._currentIndex += 1
+        } else {
+          break
+        }
+      }
+    }
+  }
+
 
   /**
    * Increments the current time to the next frame based on the FPS set

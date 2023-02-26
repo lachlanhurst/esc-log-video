@@ -18,6 +18,7 @@ import { LogFileDataHelper } from '../lib/logFileDataHelper'
 import { getVisualization } from '../lib/visualizationUtils'
 import { getDummyData } from '../lib/dummyData'
 import { FileSpecificationColumn } from '../lib/fileSpecification'
+import { minute } from '../lib/units'
 
 
 const version = __APP_VERSION__
@@ -31,6 +32,8 @@ onMounted(() => {
   logFileData.value.fileSpecification.defaultColumns.forEach((col) => {
     addColumnAsDefaultToSvd(col)
   })
+
+  updateTimeline()
 })
 
 const renderCanvas = ref()
@@ -79,6 +82,46 @@ const rendering = ref<boolean>(false)
 const renderProgressMessage = ref<string>("")
 const logFileData = ref<null | LogFileData>(null)
 const logFileDataHelper = ref<LogFileDataHelper>(new LogFileDataHelper())
+const timelineRange = ref<[number, number]>([0, 100]);
+
+const timelineSlider = ref()
+const updateTimeline = () => {
+  const st = Math.round(logFileDataHelper.value.startTime)
+  const et = Math.round(logFileDataHelper.value.endTime)
+
+  timelineRange.value[0] = st
+  timelineRange.value[1] = et
+
+  for (const prop of Object.getOwnPropertyNames(timelineMarks.value)) {
+    delete timelineMarks.value[prop];
+  }
+
+  timelineMarks.value[st] = logFileDataHelper.value.startTimeLabel
+  timelineMarks.value[et] = logFileDataHelper.value.endTimeLabel
+}
+
+const timelineAfterChange = () => {
+  renderCanvas.value!.startPlaying()
+}
+
+const timelineTipFormatter = (value: number) => {
+  return minute.format(minute.convert(value));
+}
+const timelineMarks = ref<Record<number, any>>({});
+
+watch(
+  () => timelineRange.value,
+  (newValue, oldValue) => {
+    renderCanvas.value!.stopPlaying()
+    if (newValue[0] == oldValue[0]) {
+      logFileDataHelper.value.endTimeClipped = newValue[1]
+    } else if (newValue[1] == oldValue[1]) {
+      logFileDataHelper.value.startTimeClipped = newValue[0]
+    }
+    renderCanvas.value!.draw()
+  }
+)
+
 
 const handleChange = info => {
   if (info.file.status !== 'uploading') {
@@ -99,6 +142,8 @@ const handleChange = info => {
       logFileData.value = data
       logFileDataHelper.value.logFileData = data
       logFileDataHelper.value.reset()
+
+      updateTimeline()
 
       // need to remove the series video details that are currently displayed, but
       // no longer have data because a new dataset was reloaded.
@@ -435,27 +480,44 @@ watch(
               </div>
             </a-row>
 
-            <a-row type="flex" align="middle" :gutter="[8, 8]" style="padding: 8px 0px">
-              <a-col class="gutter-row">
-                <a-button @click="startRender" :disabled="rendering" type="primary">
-                  <template #icon>
-                    <PlayCircleOutlined />
-                  </template>
-                  Create video
-                </a-button>
-              </a-col>
-              <a-col class="gutter-row">
-                <a-button @click="cancelRender" :disabled="!rendering">
-                  Cancel
-                </a-button>
-              </a-col>
+            <a-col>
+              <a-row type="flex" align="middle" :gutter="[8, 8]" style="padding: 0px 0px">
+                <a-col flex="auto" class="gutter-row">
+                  <a-slider
+                    ref="timelineSlider"
+                    v-model:value="timelineRange"
+                    range
+                    :tip-formatter="timelineTipFormatter"
+                    :marks="timelineMarks"
+                    :min="Math.round(logFileDataHelper.startTime)"
+                    :max="Math.round(logFileDataHelper.endTime)"
+                    :disabled="rendering"
+                    @afterChange="timelineAfterChange"
+                  />
+                </a-col>
+              </a-row>
+              <a-row type="flex" align="middle" :gutter="[8, 8]" style="padding: 0px 0px">
+                <a-col class="gutter-row">
+                  <a-button @click="startRender" :disabled="rendering" type="primary">
+                    <template #icon>
+                      <PlayCircleOutlined />
+                    </template>
+                    Create video
+                  </a-button>
+                </a-col>
+                <a-col class="gutter-row">
+                  <a-button @click="cancelRender" :disabled="!rendering">
+                    Cancel
+                  </a-button>
+                </a-col>
 
-              <a-col flex="auto" class="gutter-row">
-                <div> {{ renderProgressMessage }}</div>
-                <a-progress :percent="renderProgress * 100" status="active" :showInfo="false" trailColor="white"/>
-              </a-col>
+                <a-col flex="auto" class="gutter-row">
+                  <div> {{ renderProgressMessage }}</div>
+                  <a-progress :percent="renderProgress * 100" status="active" :showInfo="false" trailColor="white"/>
+                </a-col>
 
-            </a-row>
+              </a-row>
+            </a-col>
 
           </template>
           <template v-if="rightPanelTabKey === 'mask'">
@@ -569,5 +631,9 @@ watch(
 #app .ant-card-body {
   padding-top: 16px;
   padding-bottom: 16px;
+}
+
+.ant-slider-rail {
+  background: rgba(255, 255, 255, 1);
 }
 </style>
