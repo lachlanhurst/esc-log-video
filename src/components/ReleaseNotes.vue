@@ -13,16 +13,27 @@
     </template>
     <a-list item-layout="vertical" size="small">
 
-    <a-list-item>
-      <a-list-item-meta description="" class="meta-class">
-        <template #title>
-          v0.2.0
-        </template>
-      </a-list-item-meta>
-      <ul class="list-style">
-        <li>Added target resolution setting. Select the resolution that matches your ride footage.</li>
-      </ul>
-    </a-list-item>
+      <a-list-item>
+        <a-list-item-meta description="" class="meta-class">
+          <template #title>
+            v0.3.0
+          </template>
+        </a-list-item-meta>
+        <ul class="list-style">
+          <li>Added slider to trim start and end of log data</li>
+        </ul>
+      </a-list-item>
+
+      <a-list-item>
+        <a-list-item-meta description="" class="meta-class">
+          <template #title>
+            v0.2.0
+          </template>
+        </a-list-item-meta>
+        <ul class="list-style">
+          <li>Added target resolution setting. Select the resolution that matches your ride footage.</li>
+        </ul>
+      </a-list-item>
 
 
       <a-list-item>

@@ -482,7 +482,7 @@ watch(
 
             <a-col>
               <a-row type="flex" align="middle" :gutter="[8, 8]" style="padding: 0px 0px">
-                <a-col flex="auto" class="gutter-row">
+                <a-col flex="auto" class="gutter-row" style="padding-left: 12px; padding-right: 12px;">
                   <a-slider
                     ref="timelineSlider"
                     v-model:value="timelineRange"
