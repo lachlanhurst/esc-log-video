@@ -143,7 +143,7 @@ const handleChange = info => {
       logFileDataHelper.value.logFileData = data
       logFileDataHelper.value.reset()
 
-      updateTimeline()
+      setTimeout(updateTimeline, 0)
 
       // need to remove the series video details that are currently displayed, but
       // no longer have data because a new dataset was reloaded.
