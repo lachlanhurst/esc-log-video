@@ -53,6 +53,86 @@ class Map extends DataTypeVisualization {
     return angle * (Math.PI / 180);
   }
 
+  buildBaseMap(cache: CacheObject, videoOptions: VideoOptions, points: number[][]): void {
+    if (points.length === 0) {
+      cache.longMin = 0
+      cache.latMin = 0
+      cache.scaleFactor = 1
+      cache.width = this._width
+      cache.height = this._minHeight
+      cache.widthOffset = 0
+      cache.baseMap = new OffscreenCanvas(cache.width, cache.height)
+      cache.baseMapMask = new OffscreenCanvas(cache.width + 8, cache.height + 8)
+      return
+    }
+
+    let mm = this.minMax(points)
+
+    let dx = mm.longMax - mm.longMin
+    let dy = mm.latMax - mm.latMin
+    let safeDx = dx === 0 ? 0.000001 : dx
+    let safeDy = dy === 0 ? 0.000001 : dy
+    let scaleFactor = this._width / safeDx
+    let pxHeightBasedOnWidth = scaleFactor * safeDy
+    if (pxHeightBasedOnWidth > this._maxHeight) {
+      scaleFactor = this._maxHeight / safeDy
+    }
+
+    let pxWidth = safeDx * scaleFactor
+    cache.widthOffset = (this._width - pxWidth) / 2
+    cache.longMin = mm.longMin
+    cache.latMin = mm.latMin
+    cache.scaleFactor = scaleFactor
+    cache.width = this._width
+    cache.height = Math.max(this._minHeight, Math.round(scaleFactor * safeDy))
+
+    let baseMapCanvas = new OffscreenCanvas(cache.width, cache.height)
+    let baseMapContext = baseMapCanvas.getContext('2d')! as OffscreenCanvasRenderingContext2D
+    this._setCanvasScaling(baseMapContext, videoOptions.resolution.scaleFactor)
+    baseMapContext.strokeStyle = videoOptions.foregroundColor
+    baseMapContext.lineWidth = 1
+    baseMapContext.beginPath()
+
+    let isFirst = true
+    for (let pt of points) {
+      let ptX = (pt[0] - cache.longMin) * cache.scaleFactor
+      let ptY = (pt[1] - cache.latMin) * cache.scaleFactor
+      if (isFirst) {
+        isFirst = false
+        baseMapContext.moveTo(ptX + cache.widthOffset, cache.height - ptY)
+      } else {
+        baseMapContext.lineTo(ptX + cache.widthOffset, cache.height - ptY)
+      }
+    }
+    baseMapContext.stroke()
+    cache.baseMap = baseMapCanvas
+
+    let maskPadding = 4
+    let baseMapMaskCanvas = new OffscreenCanvas(cache.width + maskPadding * 2, cache.height + maskPadding * 2)
+    let baseMapMaskContext = baseMapMaskCanvas.getContext('2d')! as OffscreenCanvasRenderingContext2D
+    baseMapMaskContext.strokeStyle = 'white'
+    baseMapMaskContext.lineWidth = 10
+    baseMapMaskContext.lineCap = 'round'
+    baseMapMaskContext.lineJoin = 'round'
+    baseMapMaskContext.beginPath()
+
+    isFirst = true
+    for (let pt of points) {
+      let ptX = (pt[0] - cache.longMin) * cache.scaleFactor
+      let ptY = (pt[1] - cache.latMin) * cache.scaleFactor
+      if (isFirst) {
+        isFirst = false
+        baseMapMaskContext.moveTo(ptX + cache.widthOffset + maskPadding, cache.height - ptY + maskPadding)
+      } else {
+        baseMapMaskContext.lineTo(ptX + cache.widthOffset + maskPadding, cache.height - ptY + maskPadding)
+      }
+    }
+    baseMapMaskContext.stroke()
+    cache.baseMapMask = baseMapMaskCanvas
+
+    cache.baseMapRangeKey = `${cache.startTimeClipped}:${cache.endTimeClipped}`
+  }
+
   /**
    * Calculates distance from two points (lat long points)
    * @param lon1
@@ -76,115 +156,51 @@ class Map extends DataTypeVisualization {
     seriesVideoDetails: SeriesVideoDetail,
     videoOptions: VideoOptions
   ): void {
+    cache.allPoints = []
+    const timeSeries = cache.timeSeries
+    const timeData = timeSeries ? timeSeries.data : []
+    for (let i = 0; i < logFileDataSeries.data.length; i++) {
+      const point = logFileDataSeries.data[i]
+      const time = timeData[i]
+      if (time == null) {
+        continue
+      }
+      cache.allPoints.push({ time, point })
+    }
+
+    this.rebuildBaseMap(cache, videoOptions)
+
+  }
+
+  rebuildBaseMap(cache: CacheObject, videoOptions: VideoOptions): void {
+    const start = cache.startTimeClipped ?? 0
+    const end = cache.endTimeClipped ?? Number.MAX_VALUE
 
     let prevPosition: number[] | null = null
-
-    let points = logFileDataSeries.data.filter((point) => {
-      if (point[0] == 0 && point[1] == 0) {
-        // this seems to happen in VESC log files
-        return false
-      } else if (prevPosition == null) {
-        prevPosition = point
-        return true
-      } else {
-        // the vesc updates its data much faster that the GPS of the phone that is
-        // recording the data, so we get many of the same coordinates. Filter these
-        // out to make drawing quicker
-        let isSameAsLast = prevPosition![0] == point[0] && prevPosition![0] == point[0]
-        if (isSameAsLast) {
+    let points = (cache.allPoints ?? [])
+      .filter((entry) => entry.time >= start && entry.time <= end)
+      .map((entry) => entry.point)
+      .filter((point) => {
+        if (point[0] == 0 && point[1] == 0) {
           return false
+        } else if (prevPosition == null) {
+          prevPosition = point
+          return true
+        } else {
+          let isSameAsLast = prevPosition![0] == point[0] && prevPosition![0] == point[0]
+          if (isSameAsLast) {
+            return false
+          }
+          let distance = this.distance(prevPosition[0], prevPosition[1], point[0], point[1])
+          if (distance > 0.2) {
+            return false
+          }
+          prevPosition = point
+          return !isSameAsLast
         }
-        // calculate the distance between the last point, and the current point. If this
-        // is more than 200 meters, skip it. Generally the time between points is
-        // going to be fractions of a second, so the only time this would occur is when
-        // there is a noisy point.
-        let distance = this.distance(prevPosition[0], prevPosition[1], point[0], point[1])
-        if (distance > 0.2) {
-          return false
-        }
-        prevPosition = point
-        return !isSameAsLast
-      }
-    })
+      })
 
-    let mm = this.minMax(points)
-
-    let dx = mm.longMax - mm.longMin
-    let dy = mm.latMax - mm.latMin
-    let scaleFactor = this._width / dx
-    // let scaleFactorY = 0
-    let pxHeightBasedOnWidth = scaleFactor * dy
-    if (pxHeightBasedOnWidth > this._maxHeight) {
-      // height to big, so use a Y based scale factor
-      scaleFactor = this._maxHeight / dy
-    } else {
-      // then scale factor based on width gives an
-      // acceptable height.
-      // nothing to do here
-    }
-
-    // to keep the map centered
-    let pxWidth = dx * scaleFactor
-    cache.widthOffset = (this._width - pxWidth) / 2
-
-    // cache some info that we'll need later to draw the dot
-    // over the base map
-    cache.longMin = mm.longMin
-    cache.latMin = mm.latMin
-    cache.scaleFactor = scaleFactor
-    cache.width = this._width
-    cache.height = Math.round(scaleFactor * dy)
-
-    // draw the basemap and stick it in the cache, this way we
-    // don't need to redraw it every frame.
-    let baseMapCanvas = new OffscreenCanvas(cache.width, cache.height)
-    let baseMapContext = baseMapCanvas.getContext('2d')! as OffscreenCanvasRenderingContext2D
-    this._setCanvasScaling(baseMapContext, videoOptions.resolution.scaleFactor)
-    baseMapContext.strokeStyle = videoOptions.foregroundColor
-    baseMapContext.lineWidth = 1
-    baseMapContext.beginPath()
-
-    let isFirst = true
-    // loop through all points in the filtered list
-    for (let pt of points) {
-      let ptX = (pt[0] - cache.longMin) * cache.scaleFactor
-      let ptY = (pt[1] - cache.latMin) * cache.scaleFactor
-      if (isFirst) {
-        isFirst = false
-        baseMapContext.moveTo(ptX + cache.widthOffset, cache.height - ptY)
-      } else {
-        baseMapContext.lineTo(ptX + cache.widthOffset, cache.height - ptY)
-      }
-    }
-    baseMapContext.stroke()
-
-    cache.baseMap = baseMapCanvas
-
-    let maskPadding = 4
-
-    let baseMapMaskCanvas = new OffscreenCanvas(cache.width + maskPadding*2, cache.height + maskPadding*2)
-    let baseMapMaskContext = baseMapMaskCanvas.getContext('2d')! as OffscreenCanvasRenderingContext2D
-    baseMapMaskContext.strokeStyle = "white"
-    baseMapMaskContext.lineWidth = 10
-    baseMapMaskContext.lineCap = 'round'
-    baseMapMaskContext.lineJoin = 'round'
-    baseMapMaskContext.beginPath()
-
-    isFirst = true
-    // loop through all points in the filtered list
-    for (let pt of points) {
-      let ptX = (pt[0] - cache.longMin) * cache.scaleFactor
-      let ptY = (pt[1] - cache.latMin) * cache.scaleFactor
-      if (isFirst) {
-        isFirst = false
-        baseMapMaskContext.moveTo(ptX + cache.widthOffset + maskPadding, cache.height - ptY + maskPadding)
-      } else {
-        baseMapMaskContext.lineTo(ptX + cache.widthOffset + maskPadding, cache.height - ptY + maskPadding)
-      }
-    }
-    baseMapMaskContext.stroke()
-    cache.baseMapMask = baseMapMaskCanvas
-
+    this.buildBaseMap(cache, videoOptions, points)
   }
 
   draw(
@@ -196,6 +212,11 @@ class Map extends DataTypeVisualization {
     baseY: number,
     value: any
   ): void {
+    const currentRangeKey = `${cache.startTimeClipped}:${cache.endTimeClipped}`
+    if (cache.baseMapRangeKey !== currentRangeKey) {
+      this.rebuildBaseMap(cache, videoOptions)
+    }
+
     let w = this.width(seriesVideoDetail, cache)
     let h = this.height(seriesVideoDetail, cache)
 
