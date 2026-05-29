@@ -1,4 +1,4 @@
-import { allSingleValueDataTypes } from '../dataTypes'
+import { allSingleValueDataTypes, stateCode, faultCode } from '../dataTypes'
 import { LogFileDataSeries } from '../logFileData'
 import { SeriesVideoDetail } from '../SeriesVideoDetail'
 import { VideoOptions } from '../videoOptions'
@@ -14,7 +14,7 @@ class LabelAndValue extends DataTypeVisualization {
   constructor() {
     super(
       'Label and value text',
-      allSingleValueDataTypes,
+      [...allSingleValueDataTypes, stateCode, faultCode],
       []
     )
     this._width = 260
@@ -58,6 +58,9 @@ class LabelAndValue extends DataTypeVisualization {
     value: any
   ): void {
     let valueText = seriesVideoDetail.unit.format(value)
+    const useLargeDegreeUnit =
+      seriesVideoDetail.unit.symbol === '°' &&
+      (seriesVideoDetail.column?.label === 'roll' || seriesVideoDetail.column?.label === 'pitch')
     // context.beginPath()
     // context.strokeStyle = "red"
     // context.rect(this.absX(0, baseX), this.absY(0, baseY), this.width(seriesVideoDetail), this.height(seriesVideoDetail))
@@ -108,7 +111,7 @@ class LabelAndValue extends DataTypeVisualization {
     context.textAlign = 'start'
     // @ts-ignore
     context.letterSpacing = "-2px"
-    context.font = `${this._unitSize}px Helvetica`
+    context.font = `${useLargeDegreeUnit ? this._valueSize : this._unitSize}px Helvetica`
     context.fillText(
       `${seriesVideoDetail.unit.symbol}`,
       this.absX(0, baseX) + 200 + 2,
@@ -128,6 +131,9 @@ class LabelAndValue extends DataTypeVisualization {
     value: any): void
   {
     let maskPadding = 4
+    const useLargeDegreeUnit =
+      seriesVideoDetail.unit.symbol === '°' &&
+      (seriesVideoDetail.column?.label === 'roll' || seriesVideoDetail.column?.label === 'pitch')
 
     context.fillStyle = "white"
 
@@ -181,9 +187,10 @@ class LabelAndValue extends DataTypeVisualization {
     context.textAlign = 'start'
     // @ts-ignore
     context.letterSpacing = "-2px"
-    context.font = `${this._unitSize}px Helvetica`
+    const unitFontSize = useLargeDegreeUnit ? this._valueSize : this._unitSize
+    context.font = `${unitFontSize}px Helvetica`
     
-    let unitTextSize = this.labelBounds(seriesVideoDetail.unit.symbol, this._unitSize, context)
+    let unitTextSize = this.labelBounds(seriesVideoDetail.unit.symbol, unitFontSize, context)
 
     context.fillRect(
       this.absX(baseX, valueTextStart + unitTextSize[0] + 2),

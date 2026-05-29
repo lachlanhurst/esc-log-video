@@ -17,6 +17,38 @@ const props = defineProps({
   disabled: Boolean,
 })
 
+const ensureVisualizationOptions = () => {
+  if (!props.seriesVideoDetail!.visualizationOptions) {
+    props.seriesVideoDetail!.visualizationOptions = {}
+  }
+  if (props.seriesVideoDetail!.visualization?.name === 'Map') {
+    if (props.seriesVideoDetail!.visualizationOptions.mapLineWidth == null) {
+      props.seriesVideoDetail!.visualizationOptions.mapLineWidth = 2
+    }
+  }
+  if (props.seriesVideoDetail!.visualization?.name === 'ADC side by side') {
+    if (!props.seriesVideoDetail!.visualizationOptions.adcDisplayMode) {
+      props.seriesVideoDetail!.visualizationOptions.adcDisplayMode = 'raw'
+    }
+    if (props.seriesVideoDetail!.visualizationOptions.adcInvert == null) {
+      props.seriesVideoDetail!.visualizationOptions.adcInvert = false
+    }
+  }
+}
+
+const getDefaultUnitForColumn = (column: FileSpecificationColumn) => {
+  if (column.label === 'state' || column.label === 'fault_code') {
+    return column.dataType.units.find(unit => unit.name === 'Decode') || column.unit
+  }
+  if (column.label === 'roll' || column.label === 'pitch') {
+    return column.dataType.units.find(unit => unit.name === 'Degree') || column.unit
+  }
+  if (column.dataType.name === 'speed') {
+    return column.dataType.units.find(unit => unit.symbol === 'km/h') || column.unit
+  }
+  return column.unit
+}
+
 const seriesOptions = computed(() => {
   return props.availableColumns!.map((col) => {
     return {
@@ -34,7 +66,7 @@ const unitOptions = computed(() => {
   return props.seriesVideoDetail!.column!.dataType.units.map((unit) => {
     return {
       value: unit.name,
-      label: `${unit.name} (${unit.symbol})`,
+      label: unit.symbol ? `${unit.name} (${unit.symbol})` : unit.name,
       unit: unit
     }
   })
@@ -63,6 +95,7 @@ const visualizationOptions = computed(() => {
 onMounted(() => {
   if (props.availableColumns && props.availableColumns.length > 0) {
     if (props.seriesVideoDetail) {
+      ensureVisualizationOptions()
       selectedSeriesName.value = props.seriesVideoDetail.column!.name
       selectedUnitName.value = props.seriesVideoDetail.unit.name
       selectedVisName.value = props.seriesVideoDetail.visualization!.name
@@ -77,10 +110,12 @@ const seriesSelected = (seriesName) => {
 
   let so = seriesOptions.value.find(series => series.column.name == seriesName)
   props.seriesVideoDetail!.column = so!.column
-  props.seriesVideoDetail!.unit = so!.column.unit
-  selectedUnitName.value = so!.column.unit.name
+  const defaultUnit = getDefaultUnitForColumn(so!.column)
+  props.seriesVideoDetail!.unit = defaultUnit
+  selectedUnitName.value = defaultUnit.name
   props.seriesVideoDetail!.visualization = getVisualization(so!.column.dataType)
   selectedVisName.value = props.seriesVideoDetail!.visualization.name
+  ensureVisualizationOptions()
 }
 
 const selectedUnitName = ref<string | null>(null)
@@ -98,7 +133,14 @@ const visSelected = (visName) => {
 
   let suo = visualizationOptions.value.find(su => su.visualization.name == visName)
   props.seriesVideoDetail!.visualization = suo!.visualization
+  ensureVisualizationOptions()
 }
+
+const adcDisplayModeOptions = [
+  { value: 'raw', label: 'Raw' },
+  { value: 'pads', label: 'Refloat style' },
+  { value: 'padsLight', label: 'Light style' },
+]
 
 function array_move(arr, old_index, new_index) {
   if (new_index >= arr.length) {
@@ -125,6 +167,7 @@ const removeSeries = () => {
 watch(
   () => props.seriesVideoDetail,
   (newValue, oldValue) => {
+    ensureVisualizationOptions()
     selectedUnitName.value = newValue!.unit!.name
     selectedSeriesName.value = newValue!.column!.name
     selectedVisName.value = newValue!.visualization!.name
@@ -153,9 +196,63 @@ watch(
           <a-form-item name="label" label="Label" class="form-margin">
             <a-input v-model:value="props.seriesVideoDetail!.name" placeholder="Series label" :disabled="props.disabled"/>
           </a-form-item>
-          <a-form-item name="visualization" label="Display as" class="form-margin">
+          <a-form-item v-if="selectedVisName !== 'ADC side by side'" name="visualization" label="Display as" class="form-margin">
             <a-select :value="selectedVisName" @change="visSelected($event)" :options="visualizationOptions" :disabled="props.disabled"/>
           </a-form-item>
+
+          <template v-if="selectedVisName === 'Map'">
+            <a-form-item label="Line width" class="form-margin">
+              <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                <a-input-number
+                  v-model:value="props.seriesVideoDetail!.visualizationOptions.mapLineWidth"
+                  :min="1" :max="5" :step="0.5"
+                  :disabled="props.disabled"
+                  style="width: 64px;"
+                />
+                <div style="flex: 1; min-width: 0; width: 100%;">
+                  <a-slider
+                    v-model:value="props.seriesVideoDetail!.visualizationOptions.mapLineWidth"
+                    :min="1" :max="5" :step="0.5"
+                    :disabled="props.disabled"
+                    style="width: 100%; margin: 0;"
+                  />
+                </div>
+              </div>
+            </a-form-item>
+          </template>
+
+          <template v-if="selectedVisName === 'Dial'">
+            <a-form-item label="Dial min" class="form-margin">
+              <a-input-number
+                v-model:value="props.seriesVideoDetail!.visualizationOptions.dialMin"
+                :disabled="props.disabled"
+                style="width: 100%;"
+              />
+            </a-form-item>
+            <a-form-item label="Dial max" class="form-margin">
+              <a-input-number
+                v-model:value="props.seriesVideoDetail!.visualizationOptions.dialMax"
+                :disabled="props.disabled"
+                style="width: 100%;"
+              />
+            </a-form-item>
+          </template>
+
+          <template v-if="selectedVisName === 'ADC side by side'">
+            <a-form-item label="Display as" class="form-margin">
+              <a-select
+                v-model:value="props.seriesVideoDetail!.visualizationOptions.adcDisplayMode"
+                :options="adcDisplayModeOptions"
+                :disabled="props.disabled"
+              />
+            </a-form-item>
+            <a-form-item label="Invert" class="form-margin">
+              <a-switch
+                v-model:checked="props.seriesVideoDetail!.visualizationOptions.adcInvert"
+                :disabled="props.disabled"
+              />
+            </a-form-item>
+          </template>
         </a-form>
       </a-col>
       <a-col flex="auto" >

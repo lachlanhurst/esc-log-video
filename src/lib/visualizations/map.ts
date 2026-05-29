@@ -90,7 +90,7 @@ class Map extends DataTypeVisualization {
     let baseMapContext = baseMapCanvas.getContext('2d')! as OffscreenCanvasRenderingContext2D
     this._setCanvasScaling(baseMapContext, videoOptions.resolution.scaleFactor)
     baseMapContext.strokeStyle = videoOptions.foregroundColor
-    baseMapContext.lineWidth = 1
+    baseMapContext.lineWidth = cache.mapLineWidth ?? 1
     baseMapContext.beginPath()
 
     let isFirst = true
@@ -111,7 +111,7 @@ class Map extends DataTypeVisualization {
     let baseMapMaskCanvas = new OffscreenCanvas(cache.width + maskPadding * 2, cache.height + maskPadding * 2)
     let baseMapMaskContext = baseMapMaskCanvas.getContext('2d')! as OffscreenCanvasRenderingContext2D
     baseMapMaskContext.strokeStyle = 'white'
-    baseMapMaskContext.lineWidth = 10
+    baseMapMaskContext.lineWidth = (cache.mapLineWidth ?? 1) + 9
     baseMapMaskContext.lineCap = 'round'
     baseMapMaskContext.lineJoin = 'round'
     baseMapMaskContext.beginPath()
@@ -213,7 +213,9 @@ class Map extends DataTypeVisualization {
     value: any
   ): void {
     const currentRangeKey = `${cache.startTimeClipped}:${cache.endTimeClipped}`
-    if (cache.baseMapRangeKey !== currentRangeKey) {
+    const currentLineWidth = (seriesVideoDetail.visualizationOptions as any)?.mapLineWidth ?? 2
+    if (cache.baseMapRangeKey !== currentRangeKey || cache.mapLineWidth !== currentLineWidth) {
+      cache.mapLineWidth = currentLineWidth
       this.rebuildBaseMap(cache, videoOptions)
     }
 

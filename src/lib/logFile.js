@@ -4,6 +4,9 @@ import { parse } from 'csv-parse/browser/esm'
 import { allFileSpecifications } from './fileSpecificationUtils'
 import { LogFileData } from './logFileData'
 import { vescSingleFileSpecification } from './fileSpecifications/vescSingle'
+import { FileSpecificationColumn, FileSpecificationCompositeColumn } from './fileSpecification'
+import * as dataTypes from './dataTypes'
+import * as units from './units'
 
 
 function readFileAsync(info) {
@@ -265,6 +268,30 @@ export class LogFileReader {
     let locations = json.locations
     let fileSpec = vescSingleFileSpecification.clone()
 
+    const ensureFloatyColumn = (label, name, dataType, unit) => {
+      if (!fileSpec.columnForLabel(label)) {
+        fileSpec.columns.push(new FileSpecificationColumn(label, name, dataType, unit))
+      }
+    }
+
+    // Floaty-specific series that are not present in VESC logs.
+    ensureFloatyColumn('state', 'State', dataTypes.stateCode, units.stateRaw)
+    ensureFloatyColumn('fault_code', 'Fault code', dataTypes.faultCode, units.faultRaw)
+    ensureFloatyColumn('adc1', 'ADC 1', dataTypes.voltage, units.volt)
+    ensureFloatyColumn('adc2', 'ADC 2', dataTypes.voltage, units.volt)
+
+    const adc1Column = fileSpec.columnForLabel('adc1')
+    const adc2Column = fileSpec.columnForLabel('adc2')
+    if (adc1Column && adc2Column) {
+      fileSpec.compositeColumns.push(
+        new FileSpecificationCompositeColumn(
+          [adc1Column, adc2Column],
+          'ADC',
+          dataTypes.adcPair
+        )
+      )
+    }
+
     // Floaty JSON does not provide the full VESC IMU payload. Hide the columns
     // that would otherwise appear as misleading zero-filled series in the UI.
     const columnsToHide = [
@@ -274,6 +301,8 @@ export class LogFileReader {
       'encoder_position',
       'gnss_vVel',
       'gnss_vAcc',
+      'adc1',
+      'adc2',
     ]
     for (const col of fileSpec.columns) {
       if (columnsToHide.includes(col.label)) {
@@ -310,13 +339,16 @@ export class LogFileReader {
       'encoder_position',
       'roll',
       'pitch',
-      'yaw',
       'gnss_lat',
       'gnss_lon',
       'gnss_alt',
       'gnss_gVel',
       'current_in',
       'current_motor',
+      'state',
+      'fault_code',
+      'adc1',
+      'adc2',
     ].forEach(addSeriesByLabel)
 
     let startTime = Number(json.startTime || 0)
@@ -361,6 +393,11 @@ export class LogFileReader {
         speed = speed / 3.6
       }
 
+      let rollAngle = this.getLastKnownValue(logs, i, 'rollAngle')
+      let pitchAngle = this.getLastKnownValue(logs, i, 'pitchAngle')
+      let rollRadians = rollAngle * (Math.PI / 180)
+      let pitchRadians = pitchAngle * (Math.PI / 180)
+
       let rowByLabel = {
         ms_today: logTimestamp - startTime,
         input_voltage: this.getLastKnownValue(logs, i, 'batteryVolts'),
@@ -377,18 +414,22 @@ export class LogFileReader {
         accY: 0,
         accZ: 0,
         encoder_position: 0,
-        roll: this.getLastKnownValue(logs, i, 'rollAngle'),
-        pitch: this.getLastKnownValue(logs, i, 'pitchAngle'),
+        roll: rollRadians,
+        pitch: pitchRadians,
         // Floaty does not expose yaw. We mirror pitch here so the
         // attitude composite remains populated and behaves like the
         // existing Float Control fallback.
-        yaw: this.getLastKnownValue(logs, i, 'pitchAngle'),
+        yaw: pitchRadians,
         gnss_lat: Number(location.latitude || 0),
         gnss_lon: Number(location.longitude || 0),
         gnss_alt: Number(location.altitude || 0),
         gnss_gVel: this.normalizeSpeedToBaseUnits(location.speed, locationSpeedIsKmh),
         current_in: this.getLastKnownValue(logs, i, 'batteryCurrent'),
         current_motor: this.getLastKnownValue(logs, i, 'motorCurrent'),
+        state: this.getLastKnownValue(logs, i, 'state'),
+        fault_code: this.getLastKnownValue(logs, i, 'faultCode'),
+        adc1: this.getLastKnownValue(logs, i, 'adc1'),
+        adc2: this.getLastKnownValue(logs, i, 'adc2'),
       }
 
       for (const [label, seriesIndex] of Object.entries(seriesIndexByLabel)) {

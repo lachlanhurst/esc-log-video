@@ -546,6 +546,103 @@ export const minute = new Minute()
 export const millisecond = new Millisecond()
 export const timeUnits = [minute, second, millisecond]
 
+// --------------------
+// Floaty state/fault code units
+// --------------------
+const floatyStateCodeMap: Record<number, string> = {
+  1: 'riding',
+  3: 'wheelslip',
+  7: 'stop angle',
+  8: 'stop half',
+  9: 'stop full',
+  11: 'startup',
+  13: 'quickstop',
+}
+
+const floatyFaultCodeMap: Record<number, string> = {
+  0: 'none',
+}
+
+class RawCodeUnit extends Unit {
+  constructor() {
+    super(
+      'Raw',
+      '',
+      true
+    )
+  }
+
+  format(value: any): string {
+    return `${Math.round(Number(value) || 0)}`
+  }
+}
+
+class DecodedStateUnit extends Unit {
+  constructor() {
+    super(
+      'Decode',
+      '',
+      false
+    )
+  }
+
+  convert(value: any) {
+    const code = Math.round(Number(value) || 0)
+    return (floatyStateCodeMap[code] ?? '??').toUpperCase()
+  }
+
+  toBaseUnit(value: any) {
+    if (typeof value === 'number') {
+      return value
+    }
+    return 0
+  }
+
+  format(value: any): string {
+    if (typeof value === 'string') {
+      return value.toUpperCase()
+    }
+    return this.convert(value)
+  }
+}
+
+class DecodedFaultUnit extends Unit {
+  constructor() {
+    super(
+      'Decode',
+      '',
+      false
+    )
+  }
+
+  convert(value: any) {
+    const code = Math.round(Number(value) || 0)
+    return (floatyFaultCodeMap[code] ?? `fault ${code}`).toUpperCase()
+  }
+
+  toBaseUnit(value: any) {
+    if (typeof value === 'number') {
+      return value
+    }
+    return 0
+  }
+
+  format(value: any): string {
+    if (typeof value === 'string') {
+      return value.toUpperCase()
+    }
+    return this.convert(value)
+  }
+}
+
+export const stateRaw = new RawCodeUnit()
+export const stateDecoded = new DecodedStateUnit()
+export const stateCodeUnits = [stateRaw, stateDecoded]
+
+export const faultRaw = new RawCodeUnit()
+export const faultDecoded = new DecodedFaultUnit()
+export const faultCodeUnits = [faultRaw, faultDecoded]
+
 // position
 export class LatitudeOrLongitude extends Unit {
   /**
