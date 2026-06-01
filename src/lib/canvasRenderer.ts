@@ -44,6 +44,9 @@ export class CanvasRenderer {
 
     for (let svd of this._seriesVideoDetails) {
       let cache: CacheObject = {}
+      cache.startTimeClipped = this._logFileDataHelper!.startTimeClipped
+      cache.endTimeClipped = this._logFileDataHelper!.endTimeClipped
+      cache.timeSeries = this._logFileDataHelper!.timeSeries
       this._seriesVideoDetailCaches.push(cache)
       let vis = svd.visualization
 
@@ -70,6 +73,9 @@ export class CanvasRenderer {
     for (let i = 0; i < this._seriesVideoDetails.length; i++) {
       let svd = this._seriesVideoDetails[i]
       let cache = this._seriesVideoDetailCaches[i]
+
+      cache.startTimeClipped = this._logFileDataHelper!.startTimeClipped
+      cache.endTimeClipped = this._logFileDataHelper!.endTimeClipped
 
       let vis = svd.visualization!
       height += vis.height(svd, cache)
@@ -112,6 +118,9 @@ export class CanvasRenderer {
     for (let i = 0; i < this._seriesVideoDetails.length; i++) {
       let svd = this._seriesVideoDetails[i]
       let cache = this._seriesVideoDetailCaches[i]
+
+      cache.startTimeClipped = this._logFileDataHelper!.startTimeClipped
+      cache.endTimeClipped = this._logFileDataHelper!.endTimeClipped
 
       let value = this._logFileDataHelper!.getValue(svd.column, svd.unit)
       let vis = svd.visualization!

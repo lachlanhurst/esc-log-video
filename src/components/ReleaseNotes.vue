@@ -6,12 +6,28 @@
 <template>
   <a-card style="width: 100%">
     <template #title>
-      <div class="ant-card-head-title" style="padding-top: 0px; padding-bottom: 0px;">Release notes</div>
+      <div class="ant-card-head-title" style="padding-top: 0px; padding-bottom: 0px;">Release notes (v0.4.0)</div>
       <div class="ant-card-meta-description" style="padding-top: 0px; font-weight: 400; font-size: 14px; margin-top: -8px;">
         What has changed in the latest releases of ESC Log Video
       </div>
     </template>
     <a-list item-layout="vertical" size="small">
+
+      <a-list-item>
+        <a-list-item-meta description="" class="meta-class">
+          <template #title>
+            v0.4.0
+          </template>
+        </a-list-item-meta>
+        <ul class="list-style">
+          <li>Added support for Floaty (<a href="https://apps.apple.com/fr/app/floaty-vesc-stats-tuning/id1671681675" target="_blank">iOS</a> &amp; <a href="https://play.google.com/store/apps/details?id=com.floaty.floatyapp" target="_blank">Android</a>) log files by Tsukay</li>
+          <li>Improved loading feedback with a data-rate indicator.</li>
+          <li>Expanded Floaty data support and defaults for state, fault, roll/pitch, and ADC series.</li>
+          <li>Added new ADC display styles, including a detailed footpad view and a light alternative.</li>
+          <li>Added map line thickness control in the UI.</li>
+          <li>Fixed angle display issues.</li>
+        </ul>
+      </a-list-item>
 
       <a-list-item>
         <a-list-item-meta description="" class="meta-class">

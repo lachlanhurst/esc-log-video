@@ -167,6 +167,36 @@ class Position extends DataType {
 }
 export const position = new Position()
 
+class StateCode extends DataType {
+  constructor() {
+    super(
+      'state code',
+      units.stateCodeUnits
+    )
+  }
+}
+export const stateCode = new StateCode()
+
+class FaultCode extends DataType {
+  constructor() {
+    super(
+      'fault code',
+      units.faultCodeUnits
+    )
+  }
+}
+export const faultCode = new FaultCode()
+
+class AdcPair extends DataType {
+  constructor() {
+    super(
+      'adc pair',
+      [units.volt]
+    )
+  }
+}
+export const adcPair = new AdcPair()
+
 export const allSingleValueDataTypes = [
   temperature,
   distance,

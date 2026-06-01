@@ -7,6 +7,7 @@ import { dial } from './visualizations/dial'
 import { labelAndValue } from './visualizations/labelAndValue'
 import { map } from './visualizations/map'
 import { sparkline } from './visualizations/sparkline'
+import { adcPairVisualization } from './visualizations/adcPair'
 
 
 export const allVisualizations: DataTypeVisualization[] = [
@@ -14,6 +15,7 @@ export const allVisualizations: DataTypeVisualization[] = [
   map,
   angleIndicator,
   labelAndValue,
+  adcPairVisualization,
   barChart,
   dial,
   sparkline,

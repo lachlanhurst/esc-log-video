@@ -95,6 +95,21 @@ class Dial extends DataTypeVisualization {
     let max = Math.max(...logFileDataSeries.data)
     min = seriesVideoDetails.unit.convert(min)
     max = seriesVideoDetails.unit.convert(max)
+
+    // Allow users to override dial range in the selected display units.
+    const visOptions = (seriesVideoDetails.visualizationOptions || {}) as any
+    const manualMin = Number(visOptions.dialMin)
+    const manualMax = Number(visOptions.dialMax)
+    if (Number.isFinite(manualMin)) {
+      min = manualMin
+    }
+    if (Number.isFinite(manualMax)) {
+      max = manualMax
+    }
+    if (max <= min) {
+      max = min + 1
+    }
+
     cache.min = min
     cache.max = max
 
