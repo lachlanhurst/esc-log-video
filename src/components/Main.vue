@@ -368,7 +368,7 @@ watch(
               <a-row justify="end">
                 <a href="https://github.com/lachlanhurst/esc-log-video">GitHub repo</a>
               </a-row>
-              <a-row justify="end">©2023 Lachlan Hurst</a-row>
+              <a-row justify="end">Contributors: Lachlan Hurst, Tsukay</a-row>
             </a-space>
           </a-col>
         </div>
