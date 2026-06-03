@@ -8,12 +8,14 @@ import { labelAndValue } from './visualizations/labelAndValue'
 import { map } from './visualizations/map'
 import { sparkline } from './visualizations/sparkline'
 import { adcPairVisualization } from './visualizations/adcPair'
+import { rollPitchIndicator } from './visualizations/rollPitchIndicator'
 
 
 export const allVisualizations: DataTypeVisualization[] = [
   attitudeIndicator,
   map,
   angleIndicator,
+  rollPitchIndicator,
   labelAndValue,
   adcPairVisualization,
   barChart,

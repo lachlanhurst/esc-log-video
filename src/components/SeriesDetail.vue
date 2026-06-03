@@ -28,12 +28,19 @@ const ensureVisualizationOptions = () => {
   }
   if (props.seriesVideoDetail!.visualization?.name === 'ADC side by side') {
     if (!props.seriesVideoDetail!.visualizationOptions.adcDisplayMode) {
-      props.seriesVideoDetail!.visualizationOptions.adcDisplayMode = 'raw'
+      props.seriesVideoDetail!.visualizationOptions.adcDisplayMode = 'padsLight'
     }
     if (props.seriesVideoDetail!.visualizationOptions.adcInvert == null) {
       props.seriesVideoDetail!.visualizationOptions.adcInvert = false
     }
   }
+}
+
+const getDefaultVisualizationForColumn = (column: FileSpecificationColumn) => {
+  if (column.label === 'roll' || column.label === 'pitch') {
+    return allVisualizations.find(vis => vis.name === 'Onewheel style') || getVisualization(column.dataType)
+  }
+  return getVisualization(column.dataType)
 }
 
 const getDefaultUnitForColumn = (column: FileSpecificationColumn) => {
@@ -79,8 +86,19 @@ const visualizationOptions = computed(() => {
     return []
   }
 
+  const columnLabel = props.seriesVideoDetail!.column!.label
+  const isRollOrPitch = columnLabel === 'roll' || columnLabel === 'pitch'
+
   let visOptions = allVisualizations.filter((vis) => {
-    return vis.supportsDataType(props.seriesVideoDetail!.column!.dataType)
+    if (!vis.supportsDataType(props.seriesVideoDetail!.column!.dataType)) {
+      return false
+    }
+
+    if (vis.name === 'Onewheel style' && !isRollOrPitch) {
+      return false
+    }
+
+    return true
   }).map(vis => {
     return {
       value: vis.name,
@@ -113,7 +131,7 @@ const seriesSelected = (seriesName) => {
   const defaultUnit = getDefaultUnitForColumn(so!.column)
   props.seriesVideoDetail!.unit = defaultUnit
   selectedUnitName.value = defaultUnit.name
-  props.seriesVideoDetail!.visualization = getVisualization(so!.column.dataType)
+  props.seriesVideoDetail!.visualization = getDefaultVisualizationForColumn(so!.column)
   selectedVisName.value = props.seriesVideoDetail!.visualization.name
   ensureVisualizationOptions()
 }
