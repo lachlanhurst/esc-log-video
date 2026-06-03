@@ -16,6 +16,7 @@ import { LogFileReader } from '../lib/logFile'
 import { LogFileData } from '../lib/logFileData'
 import { LogFileDataHelper } from '../lib/logFileDataHelper'
 import { getVisualization } from '../lib/visualizationUtils'
+import { allVisualizations } from '../lib/visualizationUtils'
 import { getDummyData } from '../lib/dummyData'
 import { FileSpecificationColumn } from '../lib/fileSpecification'
 import { minute } from '../lib/units'
@@ -276,12 +277,24 @@ const addColumnAsDefaultToSvd = (column: FileSpecificationColumn) => {
     return col.unit
   }
 
+  const getDefaultVisualizationForColumn = (col: FileSpecificationColumn) => {
+    if (col.label === 'roll' || col.label === 'pitch') {
+      return allVisualizations.find(vis => vis.name === 'Onewheel style') || getVisualization(col.dataType)
+    }
+    return getVisualization(col.dataType)
+  }
+
+  const defaultVisualization = getDefaultVisualizationForColumn(column)
+  const defaultVisualizationOptions = defaultVisualization.name === 'ADC side by side'
+    ? { adcDisplayMode: 'padsLight', adcInvert: false }
+    : {}
+
   seriesVideoDetails.value.push({
     column: column,
     unit: getDefaultUnit(column),
     name: column.name,
-    visualization: getVisualization(column.dataType),
-    visualizationOptions: {},
+    visualization: defaultVisualization,
+    visualizationOptions: defaultVisualizationOptions,
   })
 }
 
